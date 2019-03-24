@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.1.0">
+  <meta name="generator" content="Hugo 0.54.0" />
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Jiaming Shen">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Lack of suitable mutivariate joint distributions for discrete variables that incorporate with the correlation.
+Maximizing the full likelihooe function constructed from copula representation can be computational infeasible&ndash;&gt; Composite pairwise likelihood approach.
+Copula usage: Gaussian copula:Formally:
+A set of random variables $\boldsymbol{U}=\left(U{1}, \dots, U{d}\right)^{\mathrm{T}}$ follows a Gaussian copula model if their joint distribution is specified by $$ F\left(u{1}, \ldots, u{d}\right)=P\left(U{1} \leq u{1}, \ldots, U{d} \leq u{d}\right)=\Phi{d}\left(v{1}, \ldots, v_{d} ; \mathbf{R}\right) $$ $\Phi_d$ is the porbability distribution function of the d-dimensional standardised normal distribution with zero mean, $\mathbf R$ is the correlation matrix.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/copula-for-discrete-lda/">
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css" integrity="sha384-aOkxzJ5uQz7WBObEZcHvV5JvRW3TUc2rNPA7pe3AwnsUohiw1Vj2Rgx2KSOkF5+h" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+  
+
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:400,400italic,700|Roboto+Mono">
+  
+
+  <link rel="stylesheet" href="/styles.css">
+  
+
+  
+  
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Academic">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Academic">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/copula-for-discrete-lda/">
+
+  
+  
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Academic">
+  <meta property="og:url" content="/post/copula-for-discrete-lda/">
+  <meta property="og:title" content="Notes on Discrete Longitudinal Data Modeling with a Mean-Correlation Regression Approach | Academic">
+  <meta property="og:description" content="Lack of suitable mutivariate joint distributions for discrete variables that incorporate with the correlation.
+Maximizing the full likelihooe function constructed from copula representation can be computational infeasible&ndash;&gt; Composite pairwise likelihood approach.
+Copula usage: Gaussian copula:Formally:
+A set of random variables $\boldsymbol{U}=\left(U{1}, \dots, U{d}\right)^{\mathrm{T}}$ follows a Gaussian copula model if their joint distribution is specified by $$ F\left(u{1}, \ldots, u{d}\right)=P\left(U{1} \leq u{1}, \ldots, U{d} \leq u{d}\right)=\Phi{d}\left(v{1}, \ldots, v_{d} ; \mathbf{R}\right) $$ $\Phi_d$ is the porbability distribution function of the d-dimensional standardised normal distribution with zero mean, $\mathbf R$ is the correlation matrix."><meta property="og:image" content="/img/icon-192.png">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2019-02-24T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2019-02-24T00:00:00&#43;00:00">
+  
+
+  
+
+  
+
+  <title>Notes on Discrete Longitudinal Data Modeling with a Mean-Correlation Regression Approach | Academic</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#TableOfContents" data-offset="71" >
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" role="textbox" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+<nav class="navbar navbar-light fixed-top navbar-expand-lg py-0" id="navbar-main">
+  <div class="container">
+
+    
+      <a class="navbar-brand" href="/">Academic</a>
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+    
+    <div class="collapse navbar-collapse" id="navbar">
+
+      
+      
+      <ul class="navbar-nav mr-auto">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#projects">
+            
+            <span>Projects</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#featured">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/tutorial/">
+            
+            <span>Tutorials</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+      
+      </ul>
+      <ul class="navbar-nav ml-auto">
+      
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+        </li>
+        
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1 itemprop="name">Notes on Discrete Longitudinal Data Modeling with a Mean-Correlation Regression Approach</h1>
+
+  
+
+  
+    
+
+
+
+<meta content="2019-02-24 00:00:00 &#43;0000 GMT" itemprop="datePublished">
+<meta content="2019-02-24 00:00:00 &#43;0000 GMT" itemprop="dateModified">
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    <time>Feb 24, 2019</time>
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    7 min read
+  </span>
+  
+
+  
+  
+
+  
+
+  
+    
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Notes%20on%20Discrete%20Longitudinal%20Data%20Modeling%20with%20a%20Mean-Correlation%20Regression%20Approach&amp;url=%2fpost%2fcopula-for-discrete-lda%2f"
+         target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fpost%2fcopula-for-discrete-lda%2f"
+         target="_blank" rel="noopener">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fpost%2fcopula-for-discrete-lda%2f&amp;title=Notes%20on%20Discrete%20Longitudinal%20Data%20Modeling%20with%20a%20Mean-Correlation%20Regression%20Approach"
+         target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fpost%2fcopula-for-discrete-lda%2f&amp;title=Notes%20on%20Discrete%20Longitudinal%20Data%20Modeling%20with%20a%20Mean-Correlation%20Regression%20Approach"
+         target="_blank" rel="noopener">
+        <i class="fab fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Notes%20on%20Discrete%20Longitudinal%20Data%20Modeling%20with%20a%20Mean-Correlation%20Regression%20Approach&amp;body=%2fpost%2fcopula-for-discrete-lda%2f">
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style" itemprop="articleBody">
+      
+
+<p>Lack of suitable mutivariate joint distributions for discrete variables that incorporate with the correlation.</p>
+
+<p>Maximizing the full likelihooe function constructed from copula representation can be computational infeasible&ndash;&gt; Composite pairwise likelihood approach.</p>
+
+<p>Copula usage: Gaussian copula:Formally:</p>
+
+<p>A set of random variables $\boldsymbol{U}=\left(U<em>{1}, \dots, U</em>{d}\right)^{\mathrm{T}}$ follows a Gaussian copula model if their joint distribution is specified by
+$$
+F\left(u<em>{1}, \ldots, u</em>{d}\right)=P\left(U<em>{1} \leq u</em>{1}, \ldots, U<em>{d} \leq u</em>{d}\right)=\Phi<em>{d}\left(v</em>{1}, \ldots, v_{d} ; \mathbf{R}\right)
+$$
+$\Phi_d$ is the porbability distribution function of the d-dimensional standardised normal distribution with zero mean, $\mathbf R$ is the correlation matrix.</p>
+
+<p>$v_i=\Phi^{-1} (w_i)$ Where $w_i=P(U_i\leq u_i)$ is the marginal distribution of $U_i\leq i\leq d$.</p>
+
+<p>Other copulas, like t-copula can also be applied.</p>
+
+<p>Notation: standard Longitudinal data format: $\mathbf{y}<em>{i}=\left(y</em>{i 1}, \ldots, y<em>{i m</em>{i}}\right)^{\mathrm{T}}$ , $m<em>i$ longitudinal measurements fr i-th subject, discrete response $y</em>{ij}$ is observed at time $t<em>{ij}$ .Consider $y</em>{i j} \in{0,1,2, \ldots}$ . and $\mathbf{t}<em>{i}=\left(t</em>{i 1}, \ldots, t<em>{i m</em>{i}}\right)^{\mathrm{T}}$</p>
+
+<p>${ y<em>{ij},x</em>{ij},t_{ij} }(i=1,&hellip;,n;j=1,&hellip;,m<em>i).$ For categorical responses, we assume that $y</em>{ij}$ follows exponential family distribution (so that GLMs can be used modelling marginally discrete responses.)
+$$
+f(y)=c(y ; \varphi) \exp [{y \theta-\psi(\theta)} / \varphi]
+$$
+Since $\psi&rsquo;(\theta)=E(Y):=\mu$.</p>
+
+<p>canonical link function:
+$$
+(\psi&rsquo;)^{-1} (\mu)=g(\mu)
+$$
+Then the GLM marginally for each $y<em>{ij}$ as
+$$
+g(E(y</em>{ij}))=g(\mu<em>{ij})=x^T</em>{ij}\beta
+$$
+$\operatorname{var}(y)=\varphi \psi^{\prime \prime}(\theta)​$</p>
+
+<p>Joint distribution of $y<em>i$ following the Gaussian copula representation
+$$
+F</em>{m_i}(y<em>i)=P(Y</em>{i1}\leq y<em>{i1},&hellip;,Y</em>{im<em>i}\leq y</em>{im<em>i})=\Phi</em>{m<em>i}(z</em>{i1},&hellip;,z_{im_i};\mathbf R<em>i)
+$$
+where $z</em>{ij}=\Phi^{-1}<em>1 {F(y</em>{ij})}$</p>
+
+<p>This is, $F(y<em>{ij})$ is the probability of $Y</em>{i<em>1} \leq y</em>{i1}$ , it&rsquo;s in the probability space [0,1], $\Phi<em>1^{-1} {F(y</em>{ij})}$ make the value from probability space back to sample space. Then this is in continuous sample space, then use multivariate Normal distribution as the joint distribution.</p>
+
+<p>In a special case when the responses are binary, the correlation between two observations is a monotone function of the corresponding element in $R_i$ .</p>
+
+<p>The HPC insed in decomposite correlation coefficients $R_i$ .</p>
+
+<p>&hellip;</p>
+
+<p>The description of HPC</p>
+
+<p>&hellip;</p>
+
+<p>modelling angles by
+$$
+\omega<em>{i j k}=\pi / 2-\operatorname{atan}\left(\mathbf{w}</em>{i j k}^{\mathrm{T}} \boldsymbol{\gamma}\right)
+$$
+$\mathbf{w}_{ijk}\in \mathbb R^{q}$ is a covariate and $\mathbb \gamma$ is a $q\times 1$ unknown parameters.</p>
+
+<p>Let $\boldsymbol{\theta}=\left(\boldsymbol{\beta}^{\mathrm{T}}, \boldsymbol{\gamma}^{\mathrm{T}}, \varphi^{\mathrm{T}}\right)$.  Then follow the framework upon, we can construct likelihood and estimate $\mathbb \theta$ by MLE.</p>
+
+<p>Gaussian copula has continuous support on $\mathbb R^d$ while discrete response variable are defined only on discrete grid points.</p>
+
+<p>Full likelihood:</p>
+
+<p>$$
+\begin{aligned} L(\boldsymbol{\theta}) &amp;=\prod<em>{i=1}^{n} P\left(Y</em>{i 1}=y<em>{i 1}, \ldots, Y</em>{i m<em>{i}}=y</em>{i m<em>{i}}\right) \ &amp;=\prod</em>{i=1}^{n} P\left(y<em>{i 1}-1&lt;Y</em>{i 1} \leq y<em>{i 1} \leq y</em>{i 1}, \ldots, y<em>{i m</em>{i}}-1&lt;Y<em>{i m</em>{i}} \leq y<em>{i m</em>{i}}\right) \ &amp;=\prod<em>{i=1}^{n} \int \cdots \int</em>{\mathbf{Z}<em>{i}^{-}&lt;\mathbf{u} \leq \mathbf{Z}</em>{i}} \phi<em>{m</em>{i}}\left(\mathbf{u} ; \mathbf{R}_{i}\right) d \mathbf{u} \end{aligned}
+$$
+积分形式应该来源于Gaussian copula的定义。</p>
+
+<blockquote>
+<p>Laplace 展开对u，精度可能不够，特别是binary</p>
+
+<p>包括pairwise likelihood，需要满足一定条件才能逼近的好</p>
+</blockquote>
+
+<p>This is hard to deal with, then the author use the composite likelihood by using pairwise likelihood.</p>
+
+<p>Construct all pairwise likelihoods via bivariate copula as
+$$
+p L(\boldsymbol{\theta})=\prod<em>{i=1}^{n} \prod</em>{1 \leq j&lt;k \leq m<em>{i}} \int</em>{z<em>{i j}^{-}}^{z</em>{i j}} \int<em>{z</em>{i k}^{-}}^{z<em>{i k}} \phi</em>{2}\left(\mathbf{u} ; \rho_{i j k}\right) d \mathbf{u}
+$$
+That is, using two-integral instead of $m_i$ integrals.</p>
+
+<p>$\rho_{ijk}$ is specified by the HPC.</p>
+
+<p>log pairwise likelihood function is
+$$
+p l(\boldsymbol{\theta})=\sum<em>{i=1}^{n} \sum</em>{1 \leq j&lt;k \leq m<em>{i}} \log \int</em>{z<em>{i j}^{-}}^{z</em>{i j}} \int<em>{z</em>{i k}^{-}}^{z<em>{i k}} \phi</em>{2}\left(\mathbf{u} ; \rho<em>{i j k}\right) d \mathbf{u} :=\sum</em>{i=1}^{n} \sum<em>{1 \leq j&lt;k \leq m</em>{i}} l<em>{i j k}(\theta)
+$$
+and the score function is
+$$
+\mathbf{S}</em>{n}(\boldsymbol{\theta})=\frac{\partial p l}{\partial \boldsymbol{\theta}}=\sum<em>{i=1}^{n} \sum</em>{1 \leq j&lt;k \leq m<em>{i}} \frac{\partial l</em>{i j k}}{\partial \boldsymbol{\theta}} :=\sum<em>{i=1}^{n} \mathbf{S}</em>{n i}(\boldsymbol{\theta})
+$$
+Employ modified Fisher scoring algorithm to maximize the pairwise likelihood function.</p>
+
+<p>Song, et. al. 2009</p>
+
+<h2 id="joint-regression-analysis-of-correlated-data-using-gaussian-copulas">Joint Regression Analysis of Correlated Data Using Gaussian Copulas</h2>
+
+<p>Estimating equations (EE)-based approach. Join marginal models for correlated outcomes. Shortcomings associated with the EE method due to lack of fuly parametric model: 1. loss of estimation efficiency 2. the lack of procedures for model assessment and selection, 3. Difficulty of incorporating vector outcomes of mixed types.</p>
+
+<p>Burn injury data: $y_1=log(\textit{burn area}+1)$   $y_2$ 1 for death from burn injury and 0 for survival.</p>
+
+<p>Normally people do two seperate regression model but the problem is $y_1$ and $y_2$ are not independent, it&rsquo;s joint. How to consider the correlation in these two marginal models?</p>
+
+<p>Develop a unified and flexible likelihood framework to join various marginal models.</p>
+
+<p>Use GLMs as marginal models. To join marginal GLMs, invoke Gaussian copulas as the link model, and the resulting joint regression model is refrred to as the vector GLM(VGLM).</p>
+
+<p>VGLM for correlated discrete outcomes and correlated mixed outcomes. Comparisons to the moment-based EE approach.</p>
+
+<p>Jointly analyze vector data by the GLM approach multidimensional GLMs, or VGLMs, specify the conditional distribution of a vector response y given x as follows :
+$$
+f(\mathbf{y} | \mathbf{x} ; \boldsymbol{\beta}, \boldsymbol{\varphi}, \Gamma)=\delta\left(\mathbf{y}, \eta<em>{1}, \ldots, \eta</em>{m} ; \boldsymbol{\varphi}, \Gamma\right)
+$$
+Parametric link model $\delta(\cdot ;\varphi,\Gamma)​$ is parameterized by the vector of dispersion parameters $\boldsymbol  \varphi=(\varphi_1,&hellip;,\varphi_m)^T​$</p>
+
+<p>The $\Gamma​$ characterizes the association among the components of $\mathbf y​$.</p>
+
+<p>This article consider a new class of parametric link models $\delta(\cdot)$ via multivariate distributions generated by Gaussian copulas.</p>
+
+<p>Multivariate ED Family distribution</p>
+
+<p>Cumulative distribution function of $ED(\mu_j,\varphi_j)$ denoted by $G_j(y_j;\mu_j,\varphi<em>j)$
+$$
+F(\mathbf{y} ; \boldsymbol{\mu}, \varphi, \Gamma)=C\left{G</em>{1}\left(y<em>{1} ; \mu</em>{1}, \varphi<em>{1}\right), \ldots, G</em>{m}\left(y<em>{m} ; \mu</em>{m}, \varphi_{m}\right) | \Gamma\right}
+$$
+$\boldsymbol \mu=(\mu_1,\cdots,\mu_m)^T​$ is the vector of m means,$\boldsymbol\varphi=(\varphi_1,&hellip;,\varphi<em>m)^T​$  is dispersion parameters, $C(\cdot)​$ is m-variate Gaussian copula with
+$$
+\begin{aligned} C(\mathbf{u} | \Gamma) &amp;=\Phi</em>{m}\left{\Phi^{-1}\left(u<em>{1}\right), \ldots, \Phi^{-1}\left(u</em>{m}\right) | \Gamma\right} \ \mathbf{u} &amp;=\left(u<em>{1}, \ldots, u</em>{m}\right)^{T} \in(0,1)^{m} \end{aligned}
+$$
+$\Gamma$ is Pearson correlation matrix. For non-Gaussian margins, $\Gamma$ becomes a pairwise non-linear association, van der Waerden coefficient, which is defined by
+$$
+\gamma<em>{i j}=\operatorname{corr}\left[\Phi^{-1}\left{G</em>{i}\left(y<em>{i}\right)\right}, \Phi^{-1}\left{G</em>{j}\left(y<em>{j}\right)\right}\right]
+$$
+For continuous marginal CDF, $\gamma</em>{ij}$ represents the linear correlation of two normal scores $\Phi^{-1}\left{G<em>{t}\left(y</em>{t}\right)\right}, t=i, j$ . For discrete cases, the equation still holds but interpretation would be different. For binary case with same joint probability mass function, then the $\gamma_{ij}​$ can be interpreted as the tetrachoric correlation.</p>
+
+<p>The density functions of MEDs with different marginal distribution, in continuous case, the MED can be expressed by
+$$
+f(\mathbf{y} ; \boldsymbol{\mu}, \varphi, \Gamma)=c\left{G<em>{1}\left(y</em>{1}\right), \ldots, G<em>{m}\left(y</em>{m}\right) | \Gamma\right} \prod<em>{i=1}^{m} g</em>{i}\left(y<em>{i} ; \mu</em>{i}, \varphi<em>{i}\right)
+$$
+where $c(\cdot)$ is density of the copula $C( \cdot)$
+$$
+c(\mathbf{u} | \Gamma)=|\Gamma|^{-1 / 2} \exp \left{\frac{1}{2} \mathbf{q}^{T}\left(I</em>{m}-\Gamma^{-1}\right) \mathbf{q}\right}
+$$
+When all margins are discrete, the joint probability function of a discrete MED distribution with the form:
+$$
+\begin{aligned} f(\mathbf{y}) &amp;=\mathrm{P}\left(Y<em>{1}=y</em>{1}, \ldots, Y<em>{m}=y</em>{m}\right) \ &amp;=\sum<em>{j</em>{1}=1}^{2} \cdots \sum<em>{j</em>{m}=1}^{2}(-1)^{j<em>{1}+\cdots+j</em>{m}} C\left(u<em>{1, j</em>{1}}, \ldots, u<em>{m, j</em>{m}} | \Gamma\right) \end{aligned}
+$$
+Another case is the mixed outcome.</p>
+
+<ol>
+<li>Simultaneous Maximum Likelihood Inference</li>
+</ol>
+
+<p>Responses $\left(\mathbf{y}<em>{1}, \ldots, \mathbf{y}</em>{n}\right)$ with covariates $\left(X<em>{1}, \ldots, X</em>{n}\right)$ follows m-variate MED distribution
+$$
+\mathbf{y}<em>{i}\left|X</em>{i}=\left(\mathbf{x}<em>{i 1}, \ldots, \mathbf{x}</em>{i m}\right) \sim \operatorname{MED}<em>{m}\left(\boldsymbol{\mu}</em>{i}, \boldsymbol{\varphi}_{i}, \Gamma\right), \quad i=1, \ldots, n\right.
+$$
+Responses $\bold y_i$ has mean $\bold \mu<em>i=\left(\mu</em>{i 1}\left(\mathbf{x}<em>{i 1}\right), \ldots, \mu</em>{i m}\left(\mathbf{x}<em>{i m}\right)\right)^{T}$ and dispersion $\varphi</em>{i}=\left(\varphi<em>{i 1}, \ldots, \varphi</em>{i m}\right)^{T}$ .</p>
+
+<p>Mean $\mu_i$ follows marginal GLM $h<em>j(\mu</em>{ij})=\eta<em>j(x</em>{ij}) $  with $\eta<em>{i j}=\mathbf{x}</em>{i j}^{T} \boldsymbol{\beta}_{j}$</p>
+
+<p>Let $\theta=(\beta,\varphi,\Gamma)$ . For normal longitudinal or clustered data analysis, VGLM with $\Gamma$ has some specific form like AR(1), that is $\Gamma(\alpha)$</p>
+
+<p>Loglikelihood： $\ell(\boldsymbol{\theta} ; Y, X)=\sum<em>{i=1}^{n} \ell</em>{i}\left(\boldsymbol{\theta} ; \mathbf{y}<em>{i}, X</em>{i}\right)$，then MLE $\hat{\boldsymbol{\theta}}=\underset{\boldsymbol{\theta}}{\operatorname{argmax}} \ell(\boldsymbol{\theta} ; Y, X)$ .</p>
+
+<p>Search for result we use Gauss-Newton type algorithm.</p>
+
+<p>The observed fisher Information using the sandwich form: $\hat{\mathcal{I}}=\mathbf{A}<em>{n}^{-1}(\hat{\boldsymbol{\theta}}) \mathbf{B}</em>{n}(\hat{\boldsymbol{\theta}}) \mathbf{A}<em>{n}^{-1}(\hat{\boldsymbol{\theta}})$ where $\mathbf{A}</em>{n}(\theta)$ is the numerical Hessian matrix and $B<em>n(\theta)=\frac{1}{n} \sum</em>{i=1}^{n} \dot{\ell}<em>{i}\left(\boldsymbol{\theta} ; \mathbf{y}</em>{i}, X<em>{i}\right) \dot{\ell}</em>{i}\left(\boldsymbol{\theta} ; \mathbf{y}<em>{i}, X</em>{i}\right)^{T}$ . The iteration updates of parameter $\theta$ is by
+$$
+\theta^{k+1}=\theta^{k}+\epsilon\left{\mathbf{B}_{n}\left(\theta^{k}\right)\right}^{-1} \dot{\ell}\left(\theta^{k}\right)
+$$
+$\epsilon$  is step-halving term. Among Newton-Raphson, downhill simplex, quasi-Newton with numerical derivatives, the Gauss-Newton appears to privde the best trade-off.</p>
+
+<ol>
+<li>VGLMs for Trivariate Discrete Data</li>
+</ol>
+
+<p>Moment-based EE method .etc</p>
+
+<p>Trivariate VGLMs</p>
+
+<p>probability mass function:
+$$
+\begin{aligned} f\left(\mathbf{y}<em>{i} ; \boldsymbol{\theta}\right) &amp;=P\left(Y</em>{i 1}=y<em>{i 1}, Y</em>{i 2}=y<em>{i 2}, Y</em>{i 3}=y<em>{i 3}\right) \ &amp;=\sum</em>{j<em>{1}=1}^{2} \sum</em>{j<em>{2}=1}^{2} \sum</em>{j<em>{3}=1}^{2}(-1)^{j</em>{1}+j<em>{2}+j</em>{3}} C\left(u<em>{i, 1, j</em>{1}}, u<em>{i, 2, j</em>{2}}, u<em>{i, 3, j</em>{3}} | \alpha\right) \end{aligned}
+$$
+where $C\left(u<em>{i, 1, j</em>{1}}, u<em>{i, 2, j</em>{2}}, u<em>{i, 3, j</em>{3}} | \alpha\right)=\Phi<em>{3}\left{\Phi^{-1}\left(u</em>{i, 1, j<em>{1}}\right), \Phi^{-1}\left(u</em>{i, 2, j<em>{2}}\right)\right. ,\Phi^{-1}\left(u</em>{i, 3, j_{3}}\right) | \alpha }$with $\alpha$ is exchangeable correlation coefficient $\alpha$</p>
+
+    </div>
+
+    
+
+
+    
+      
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<div class="media author-card" itemscope itemtype="http://schema.org/Person">
+  
+  
+  <img class="portrait mr-3" src="/author/admin/avatar_hu52a603635ecebd45650b162dadabb4e5_12861_250x250_fill_q90_lanczos_center.jpg" itemprop="image" alt="Avatar">
+  
+
+  <div class="media-body">
+    <h5 class="card-title" itemprop="name"><a href="/authors/admin">Jiaming Shen</a></h5>
+    <h6 class="card-subtitle">PhD candidate in statistics</h6>
+    <p class="card-text" itemprop="description">My research interests include Longitudinal data anlaysis, parallel computing, MCMC methods.</p>
+    <ul class="network-icon" aria-hidden="true">
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="/#contact" >
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://twitter.com/User" target="_blank" rel="noopener">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://scholar.google.co.uk/" target="_blank" rel="noopener">
+          <i class="ai ai-google-scholar"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://github.com/kmsmgsh" target="_blank" rel="noopener">
+          <i class="fab fa-github"></i>
+        </a>
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+
+      
+      
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<div class="container">
+  <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+</div>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+        
+      
+
+      
+      
+    
+
+    
+    
+
+    
+    
+    
+
+    
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script>
+      const search_index_filename = "/index.json";
+      const i18n = {
+        'placeholder': "Search...",
+        'results': "results found",
+        'no_results': "No results found"
+      };
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.d7381f2d79e6271d4da28f474f49096c.js"></script>
+
+  </body>
+</html>
+

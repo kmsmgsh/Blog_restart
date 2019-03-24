@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Academic on Academic</title>
+    <link>/</link>
+    <description>Recent content in Academic on Academic</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 01 Jun 2030 13:00:00 +0100</lastBuildDate>
+    <atom:link href="/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Example Talk</title>
+      <link>/talk/example/</link>
+      <pubDate>Sat, 01 Jun 2030 13:00:00 +0100</pubDate>
+      
+      <guid>/talk/example/</guid>
+      <description>&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;Click on the &lt;strong&gt;Slides&lt;/strong&gt; button above to view the built-in slides feature.&lt;/p&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Slides can be added in a few ways:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Create&lt;/strong&gt; slides using Academic&amp;rsquo;s &lt;em&gt;Slides&lt;/em&gt; feature and link using &lt;code&gt;url_slides&lt;/code&gt; parameter in the front matter of the talk file&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Upload&lt;/strong&gt; an existing slide deck to &lt;code&gt;static/&lt;/code&gt; and link using &lt;code&gt;url_slides&lt;/code&gt; parameter in the front matter of the talk file&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Embed&lt;/strong&gt; your slides (e.g. Google Slides) or presentation video on this page using &lt;a href=&#34;https://sourcethemes.com/academic/docs/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Further talk details can easily be added to this page using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>好多坑，Hugo,academic, math and etc...</title>
+      <link>/post/hugo-academic-math-and-etc/</link>
+      <pubDate>Sun, 24 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/hugo-academic-math-and-etc/</guid>
+      <description>&lt;p&gt;随便选了这个模板来从头构造博客。
+一开始无法render \$$下的latex代码，不知道为啥，一检查发现连网页中都没有mathjax的js代码。遂去tutorial里面关于latex math formula &lt;a href=&#34;https://sourcethemes.com/academic/docs/writing-markdown-latex/#rm-latex-math&#34; target=&#34;_blank&#34;&gt;那一节&lt;/a&gt; 去找，发现没有说，只是说怎么在markdown里面写。最后是在issue里面找到别人提过一嘴，要在在config里面加math=true。。。真坑
+加完了还不算完事，公式有一多半显示不了，一看是符号_有问题，改成 _ 以后还有begin{aligned}有问题，omg，因为这是hugo版本的latex render，和pandoc以及其他的亚语法有区别，感觉碰到了大坑orz。所以估计，还得换或者再深入了解一下怎么办再说吧。。。&lt;/p&gt;
+
+&lt;p&gt;第二个坑是在用Rstudio的addin，new post里面提示
+&amp;gt; Error: Unable to find theme Directory: /Users/wglaive/Documents/GitHub/Blog_restart/themes/academic&lt;/p&gt;
+
+&lt;p&gt;一看文件夹，template的名字叫hugo-academic&amp;hellip;.orz，直接暴力尝试复制hugo-academic并且重命名为academic，然后就在写这篇。。。希望能成功搞定吧。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Notes on Discrete Longitudinal Data Modeling with a Mean-Correlation Regression Approach</title>
+      <link>/post/copula-for-discrete-lda/copula-for-discrete-lda/</link>
+      <pubDate>Sun, 24 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/copula-for-discrete-lda/copula-for-discrete-lda/</guid>
+      <description>
+
+&lt;p&gt;Lack of suitable mutivariate joint distributions for discrete variables that incorporate with the correlation.&lt;/p&gt;
+
+&lt;p&gt;Maximizing the full likelihooe function constructed from copula representation can be computational infeasible&amp;ndash;&amp;gt; Composite pairwise likelihood approach.&lt;/p&gt;
+
+&lt;p&gt;Copula usage: Gaussian copula:Formally:&lt;/p&gt;
+
+&lt;p&gt;A set of random variables $\boldsymbol{U}=\left(U  _  {1}, \dots, U  _  {d}\right)^{\mathrm{T}}$ follows a Gaussian copula model if their joint distribution is specified by
+$$
+F\left(u  _  {1}, \ldots, u  _  {d}\right)=P\left(U  _  {1} \leq u  _  {1}, \ldots, U  _  {d} \leq u  _  {d}\right)=\Phi  _  {d}\left(v  _  {1}, \ldots, v  _  {d} ; \mathbf{R}\right)
+$$
+$\Phi _ d$ is the porbability distribution function of the d-dimensional standardised normal distribution with zero mean, $\mathbf R$ is the correlation matrix.&lt;/p&gt;
+
+&lt;p&gt;$v _ i=\Phi^{-1} (w _ i)$ Where $w _ i=P(U _ i\leq u _ i)$ is the marginal distribution of $U _ i\leq i\leq d$.&lt;/p&gt;
+
+&lt;p&gt;Other copulas, like t-copula can also be applied.&lt;/p&gt;
+
+&lt;p&gt;Notation: standard Longitudinal data format: $\mathbf{y} _ {i}=\left(y _ {i 1}, \ldots, y _ {i m _ {i}}\right)^{\mathrm{T}}$ , $m _ i$ longitudinal measurements fr i-th subject, discrete response $y _ {ij}$ is observed at time $t _ {ij}$ .Consider $y _ {i j} \in{0,1,2, \ldots}$ . and $\mathbf{t} _ {i}=\left(t _ {i 1}, \ldots, t _ {i m _ {i}}\right)^{\mathrm{T}}$&lt;/p&gt;
+
+&lt;p&gt;${ y _ {ij},x _ {ij},t _ {ij} }(i=1,&amp;hellip;,n;j=1,&amp;hellip;,m _ i).$ For categorical responses, we assume that $y _ {ij}$ follows exponential family distribution (so that GLMs can be used modelling marginally discrete responses.)
+$$
+f(y)=c(y ; \varphi) \exp [{y \theta-\psi(\theta)} / \varphi]
+$$
+Since $\psi&amp;rsquo;(\theta)=E(Y):=\mu$.&lt;/p&gt;
+
+&lt;p&gt;canonical link function:
+$$
+(\psi&amp;rsquo;)^{-1} (\mu)=g(\mu)
+$$
+Then the GLM marginally for each $y _ {ij}$ as
+$$
+g(E(y _ {ij}))=g(\mu _ {ij})=x^T _ {ij}\beta
+$$
+$\operatorname{var}(y)=\varphi \psi^{\prime \prime}(\theta)$&lt;/p&gt;
+
+&lt;p&gt;Joint distribution of $y _ i$ following the Gaussian copula representation
+$$
+F _ {m _ i}(y _ i)=P(Y _ {i1}\leq y _ {i1},&amp;hellip;,Y _ {im _ i}\leq y _ {im _ i})=\Phi _ {m _ i}(z _ {i1},&amp;hellip;,z _ {im _ i};\mathbf R _ i)
+$$
+where $z _ {ij}=\Phi^{-1} _ 1 {F(y _ {ij})}$&lt;/p&gt;
+
+&lt;p&gt;This is, $F(y _ {ij})$ is the probability of $Y _ {i _ 1} \leq y _ {i1}$ , it&amp;rsquo;s in the probability space [0,1], $\Phi _ 1^{-1} {F(y _ {ij})}$ make the value from probability space back to sample space. Then this is in continuous sample space, then use multivariate Normal distribution as the joint distribution.&lt;/p&gt;
+
+&lt;p&gt;In a special case when the responses are binary, the correlation between two observations is a monotone function of the corresponding element in $R _ i$ .&lt;/p&gt;
+
+&lt;p&gt;The HPC insed in decomposite correlation coefficients $R _ i$ .&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;The description of HPC&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;modelling angles by
+$$
+\omega _ {i j k}=\pi / 2-\operatorname{atan}\left(\mathbf{w} _ {i j k}^{\mathrm{T}} \boldsymbol{\gamma}\right)
+$$
+$\mathbf{w} _ {ijk}\in \mathbb R^{q}$ is a covariate and $\mathbb \gamma$ is a $q\times 1$ unknown parameters.&lt;/p&gt;
+
+&lt;p&gt;Let $\boldsymbol{\theta}=\left(\boldsymbol{\beta}^{\mathrm{T}}, \boldsymbol{\gamma}^{\mathrm{T}}, \varphi^{\mathrm{T}}\right)$.  Then follow the framework upon, we can construct likelihood and estimate $\mathbb \theta$ by MLE.&lt;/p&gt;
+
+&lt;p&gt;Gaussian copula has continuous support on $\mathbb R^d$ while discrete response variable are defined only on discrete grid points.&lt;/p&gt;
+
+&lt;p&gt;Full likelihood:&lt;/p&gt;
+
+&lt;p&gt;$$
+\begin{aligned} L(\boldsymbol{\theta}) &amp;amp;=\prod _ {i=1}^{n} P\left(Y _ {i 1}=y _ {i 1}, \ldots, Y _ {i m _ {i}}=y _ {i m _ {i}}\right) \ &amp;amp;=\prod _ {i=1}^{n} P\left(y _ {i 1}-1&amp;lt;Y _ {i 1} \leq y _ {i 1} \leq y _ {i 1}, \ldots, y _ {i m _ {i}}-1&amp;lt;Y _ {i m _ {i}} \leq y _ {i m _ {i}}\right) \ &amp;amp;=\prod _ {i=1}^{n} \int \cdots \int _ {\mathbf{Z} _ {i}^{-}&amp;lt;\mathbf{u} \leq \mathbf{Z} _ {i}} \phi _ {m _ {i}}\left(\mathbf{u} ; \mathbf{R} _ {i}\right) d \mathbf{u} \end{aligned}
+$$
+积分形式应该来源于Gaussian copula的定义。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Laplace 展开对u，精度可能不够，特别是binary&lt;/p&gt;
+
+&lt;p&gt;包括pairwise likelihood，需要满足一定条件才能逼近的好&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is hard to deal with, then the author use the composite likelihood by using pairwise likelihood.&lt;/p&gt;
+
+&lt;p&gt;Construct all pairwise likelihoods via bivariate copula as
+$$
+p L(\boldsymbol{\theta})=\prod _ {i=1}^{n} \prod _ {1 \leq j&amp;lt;k \leq m _ {i}} \int _ {z _ {i j}^{-}}^{z _ {i j}} \int _ {z _ {i k}^{-}}^{z _ {i k}} \phi _ {2}\left(\mathbf{u} ; \rho _ {i j k}\right) d \mathbf{u}
+$$
+That is, using two-integral instead of $m _ i$ integrals.&lt;/p&gt;
+
+&lt;p&gt;$\rho _ {ijk}$ is specified by the HPC.&lt;/p&gt;
+
+&lt;p&gt;log pairwise likelihood function is
+$$
+p l(\boldsymbol{\theta})=\sum _ {i=1}^{n} \sum _ {1 \leq j&amp;lt;k \leq m _ {i}} \log \int _ {z _ {i j}^{-}}^{z _ {i j}} \int _ {z _ {i k}^{-}}^{z _ {i k}} \phi _ {2}\left(\mathbf{u} ; \rho _ {i j k}\right) d \mathbf{u} :=\sum _ {i=1}^{n} \sum _ {1 \leq j&amp;lt;k \leq m _ {i}} l _ {i j k}(\theta)
+$$
+and the score function is
+$$
+\mathbf{S} _ {n}(\boldsymbol{\theta})=\frac{\partial p l}{\partial \boldsymbol{\theta}}=\sum _ {i=1}^{n} \sum _ {1 \leq j&amp;lt;k \leq m _ {i}} \frac{\partial l _ {i j k}}{\partial \boldsymbol{\theta}} :=\sum _ {i=1}^{n} \mathbf{S} _ {n i}(\boldsymbol{\theta})
+$$
+Employ modified Fisher scoring algorithm to maximize the pairwise likelihood function.&lt;/p&gt;
+
+&lt;p&gt;Song, et. al. 2009&lt;/p&gt;
+
+&lt;h2 id=&#34;joint-regression-analysis-of-correlated-data-using-gaussian-copulas&#34;&gt;Joint Regression Analysis of Correlated Data Using Gaussian Copulas&lt;/h2&gt;
+
+&lt;p&gt;Estimating equations (EE)-based approach. Join marginal models for correlated outcomes. Shortcomings associated with the EE method due to lack of fuly parametric model: 1. loss of estimation efficiency 2. the lack of procedures for model assessment and selection, 3. Difficulty of incorporating vector outcomes of mixed types.&lt;/p&gt;
+
+&lt;p&gt;Burn injury data: $y _ 1=log(\textit{burn area}+1)$   $y _ 2$ 1 for death from burn injury and 0 for survival.&lt;/p&gt;
+
+&lt;p&gt;Normally people do two seperate regression model but the problem is $y _ 1$ and $y _ 2$ are not independent, it&amp;rsquo;s joint. How to consider the correlation in these two marginal models?&lt;/p&gt;
+
+&lt;p&gt;Develop a unified and flexible likelihood framework to join various marginal models.&lt;/p&gt;
+
+&lt;p&gt;Use GLMs as marginal models. To join marginal GLMs, invoke Gaussian copulas as the link model, and the resulting joint regression model is refrred to as the vector GLM(VGLM).&lt;/p&gt;
+
+&lt;p&gt;VGLM for correlated discrete outcomes and correlated mixed outcomes. Comparisons to the moment-based EE approach.&lt;/p&gt;
+
+&lt;p&gt;Jointly analyze vector data by the GLM approach multidimensional GLMs, or VGLMs, specify the conditional distribution of a vector response y given x as follows :
+$$
+f(\mathbf{y} | \mathbf{x} ; \boldsymbol{\beta}, \boldsymbol{\varphi}, \Gamma)=\delta\left(\mathbf{y}, \eta _ {1}, \ldots, \eta _ {m} ; \boldsymbol{\varphi}, \Gamma\right)
+$$
+Parametric link model $\delta(\cdot ;\varphi,\Gamma)$ is parameterized by the vector of dispersion parameters $\boldsymbol  \varphi=(\varphi _ 1,&amp;hellip;,\varphi _ m)^T$&lt;/p&gt;
+
+&lt;p&gt;The $\Gamma$ characterizes the association among the components of $\mathbf y$.&lt;/p&gt;
+
+&lt;p&gt;This article consider a new class of parametric link models $\delta(\cdot)$ via multivariate distributions generated by Gaussian copulas.&lt;/p&gt;
+
+&lt;p&gt;Multivariate ED Family distribution&lt;/p&gt;
+
+&lt;p&gt;Cumulative distribution function of $ED(\mu _ j,\varphi _ j)$ denoted by $G _ j(y _ j;\mu _ j,\varphi _ j)$
+$$
+F(\mathbf{y} ; \boldsymbol{\mu}, \varphi, \Gamma)=C\left{G _ {1}\left(y _ {1} ; \mu _ {1}, \varphi _ {1}\right), \ldots, G _ {m}\left(y _ {m} ; \mu _ {m}, \varphi _ {m}\right) | \Gamma\right}
+$$
+$\boldsymbol \mu=(\mu _ 1,\cdots,\mu _ m)^T$ is the vector of m means,$\boldsymbol\varphi=(\varphi _ 1,&amp;hellip;,\varphi _ m)^T$  is dispersion parameters, $C(\cdot)$ is m-variate Gaussian copula with
+$$
+\begin{aligned} C(\mathbf{u} | \Gamma) &amp;amp;=\Phi _ {m}\left{\Phi^{-1}\left(u _ {1}\right), \ldots, \Phi^{-1}\left(u _ {m}\right) | \Gamma\right} \ \mathbf{u} &amp;amp;=\left(u _ {1}, \ldots, u _ {m}\right)^{T} \in(0,1)^{m} \end{aligned}
+$$
+$\Gamma$ is Pearson correlation matrix. For non-Gaussian margins, $\Gamma$ becomes a pairwise non-linear association, van der Waerden coefficient, which is defined by
+$$
+\gamma _ {i j}=\operatorname{corr}\left[\Phi^{-1}\left{G _ {i}\left(y _ {i}\right)\right}, \Phi^{-1}\left{G _ {j}\left(y _ {j}\right)\right}\right]
+$$
+For continuous marginal CDF, $\gamma _ {ij}$ represents the linear correlation of two normal scores $\Phi^{-1}\left{G _ {t}\left(y _ {t}\right)\right}, t=i, j$ . For discrete cases, the equation still holds but interpretation would be different. For binary case with same joint probability mass function, then the $\gamma _ {ij}$ can be interpreted as the tetrachoric correlation.&lt;/p&gt;
+
+&lt;p&gt;The density functions of MEDs with different marginal distribution, in continuous case, the MED can be expressed by
+$$
+f(\mathbf{y} ; \boldsymbol{\mu}, \varphi, \Gamma)=c\left{G _ {1}\left(y _ {1}\right), \ldots, G _ {m}\left(y _ {m}\right) | \Gamma\right} \prod _ {i=1}^{m} g _ {i}\left(y _ {i} ; \mu _ {i}, \varphi _ {i}\right)
+$$
+where $c(\cdot)$ is density of the copula $C( \cdot)$
+$$
+c(\mathbf{u} | \Gamma)=|\Gamma|^{-1 / 2} \exp \left{\frac{1}{2} \mathbf{q}^{T}\left(I _ {m}-\Gamma^{-1}\right) \mathbf{q}\right}
+$$
+When all margins are discrete, the joint probability function of a discrete MED distribution with the form:
+$$
+\begin{aligned} f(\mathbf{y}) &amp;amp;=\mathrm{P}\left(Y _ {1}=y _ {1}, \ldots, Y _ {m}=y _ {m}\right) \ &amp;amp;=\sum _ {j _ {1}=1}^{2} \cdots \sum _ {j _ {m}=1}^{2}(-1)^{j _ {1}+\cdots+j _ {m}} C\left(u _ {1, j _ {1}}, \ldots, u _ {m, j _ {m}} | \Gamma\right) \end{aligned}
+$$
+Another case is the mixed outcome.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Simultaneous Maximum Likelihood Inference&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Responses $\left(\mathbf{y} _ {1}, \ldots, \mathbf{y} _ {n}\right)$ with covariates $\left(X _ {1}, \ldots, X _ {n}\right)$ follows m-variate MED distribution
+$$
+\mathbf{y} _ {i}\left|X _ {i}=\left(\mathbf{x} _ {i 1}, \ldots, \mathbf{x} _ {i m}\right) \sim \operatorname{MED} _ {m}\left(\boldsymbol{\mu} _ {i}, \boldsymbol{\varphi} _ {i}, \Gamma\right), \quad i=1, \ldots, n\right.
+$$
+Responses $\bold y _ i$ has mean $\bold \mu _ i=\left(\mu _ {i 1}\left(\mathbf{x} _ {i 1}\right), \ldots, \mu _ {i m}\left(\mathbf{x} _ {i m}\right)\right)^{T}$ and dispersion $\varphi _ {i}=\left(\varphi _ {i 1}, \ldots, \varphi _ {i m}\right)^{T}$ .&lt;/p&gt;
+
+&lt;p&gt;Mean $\mu _ i$ follows marginal GLM $h _ j(\mu _ {ij})=\eta _ j(x _ {ij}) $  with $\eta _ {i j}=\mathbf{x} _ {i j}^{T} \boldsymbol{\beta} _ {j}$&lt;/p&gt;
+
+&lt;p&gt;Let $\theta=(\beta,\varphi,\Gamma)$ . For normal longitudinal or clustered data analysis, VGLM with $\Gamma$ has some specific form like AR(1), that is $\Gamma(\alpha)$&lt;/p&gt;
+
+&lt;p&gt;Loglikelihood： $\ell(\boldsymbol{\theta} ; Y, X)=\sum _ {i=1}^{n} \ell _ {i}\left(\boldsymbol{\theta} ; \mathbf{y} _ {i}, X _ {i}\right)$，then MLE $\hat{\boldsymbol{\theta}}=\underset{\boldsymbol{\theta}}{\operatorname{argmax}} \ell(\boldsymbol{\theta} ; Y, X)$ .&lt;/p&gt;
+
+&lt;p&gt;Search for result we use Gauss-Newton type algorithm.&lt;/p&gt;
+
+&lt;p&gt;The observed fisher Information using the sandwich form: $\hat{\mathcal{I}}=\mathbf{A} _ {n}^{-1}(\hat{\boldsymbol{\theta}}) \mathbf{B} _ {n}(\hat{\boldsymbol{\theta}}) \mathbf{A} _ {n}^{-1}(\hat{\boldsymbol{\theta}})$ where $\mathbf{A} _ {n}(\theta)$ is the numerical Hessian matrix and $B _ n(\theta)=\frac{1}{n} \sum _ {i=1}^{n} \dot{\ell} _ {i}\left(\boldsymbol{\theta} ; \mathbf{y} _ {i}, X _ {i}\right) \dot{\ell} _ {i}\left(\boldsymbol{\theta} ; \mathbf{y} _ {i}, X _ {i}\right)^{T}$ . The iteration updates of parameter $\theta$ is by
+$$
+\theta^{k+1}=\theta^{k}+\epsilon\left{\mathbf{B} _ {n}\left(\theta^{k}\right)\right}^{-1} \dot{\ell}\left(\theta^{k}\right)
+$$
+$\epsilon$  is step-halving term. Among Newton-Raphson, downhill simplex, quasi-Newton with numerical derivatives, the Gauss-Newton appears to privde the best trade-off.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;VGLMs for Trivariate Discrete Data&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Moment-based EE method .etc&lt;/p&gt;
+
+&lt;p&gt;Trivariate VGLMs&lt;/p&gt;
+
+&lt;p&gt;probability mass function:
+$$
+\begin{aligned} f\left(\mathbf{y} _ {i} ; \boldsymbol{\theta}\right) &amp;amp;=P\left(Y _ {i 1}=y _ {i 1}, Y _ {i 2}=y _ {i 2}, Y _ {i 3}=y _ {i 3}\right) \ &amp;amp;=\sum _ {j _ {1}=1}^{2} \sum _ {j _ {2}=1}^{2} \sum _ {j _ {3}=1}^{2}(-1)^{j _ {1}+j _ {2}+j _ {3}} C\left(u _ {i, 1, j _ {1}}, u _ {i, 2, j _ {2}}, u _ {i, 3, j _ {3}} | \alpha\right) \end{aligned}
+$$
+where $C\left(u _ {i, 1, j _ {1}}, u _ {i, 2, j _ {2}}, u _ {i, 3, j _ {3}} | \alpha\right)=\Phi _ {3}\left{\Phi^{-1}\left(u _ {i, 1, j _ {1}}\right), \Phi^{-1}\left(u _ {i, 2, j _ {2}}\right)\right. ,\Phi^{-1}\left(u _ {i, 3, j _ {3}}\right) | \alpha }$with $\alpha$ is exchangeable correlation coefficient $\alpha$&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Example Page</title>
+      <link>/tutorial/example/</link>
+      <pubDate>Sun, 09 Sep 2018 00:00:00 +0100</pubDate>
+      
+      <guid>/tutorial/example/</guid>
+      <description>
+
+&lt;p&gt;In this tutorial, I&amp;rsquo;ll share my top 10 tips for getting started with Academic:&lt;/p&gt;
+
+&lt;h2 id=&#34;tip-1&#34;&gt;Tip 1&lt;/h2&gt;
+
+&lt;p&gt;&amp;hellip;&lt;/p&gt;
+
+&lt;h2 id=&#34;tip-2&#34;&gt;Tip 2&lt;/h2&gt;
+
+&lt;p&gt;&amp;hellip;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Privacy Policy</title>
+      <link>/privacy/</link>
+      <pubDate>Thu, 28 Jun 2018 00:00:00 +0100</pubDate>
+      
+      <guid>/privacy/</guid>
+      <description>&lt;p&gt;&amp;hellip;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>External Project</title>
+      <link>/project/external-project/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0100</pubDate>
+      
+      <guid>/project/external-project/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Internal Project</title>
+      <link>/project/internal-project/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0100</pubDate>
+      
+      <guid>/project/internal-project/</guid>
+      <description>&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.&lt;/p&gt;
+
+&lt;p&gt;Nullam vel molestie justo. Curabitur vitae efficitur leo. In hac habitasse platea dictumst. Sed pulvinar mauris dui, eget varius purus congue ac. Nulla euismod, lorem vel elementum dapibus, nunc justo porta mi, sed tempus est est vel tellus. Nam et enim eleifend, laoreet sem sit amet, elementum sem. Morbi ut leo congue, maximus velit ut, finibus arcu. In et libero cursus, rutrum risus non, molestie leo. Nullam congue quam et volutpat malesuada. Sed risus tortor, pulvinar et dictum nec, sodales non mi. Phasellus lacinia commodo laoreet. Nam mollis, erat in feugiat consectetur, purus eros egestas tellus, in auctor urna odio at nibh. Mauris imperdiet nisi ac magna convallis, at rhoncus ligula cursus.&lt;/p&gt;
+
+&lt;p&gt;Cras aliquam rhoncus ipsum, in hendrerit nunc mattis vitae. Duis vitae efficitur metus, ac tempus leo. Cras nec fringilla lacus. Quisque sit amet risus at ipsum pharetra commodo. Sed aliquam mauris at consequat eleifend. Praesent porta, augue sed viverra bibendum, neque ante euismod ante, in vehicula justo lorem ac eros. Suspendisse augue libero, venenatis eget tincidunt ut, malesuada at lorem. Donec vitae bibendum arcu. Aenean maximus nulla non pretium iaculis. Quisque imperdiet, nulla in pulvinar aliquet, velit quam ultrices quam, sit amet fringilla leo sem vel nunc. Mauris in lacinia lacus.&lt;/p&gt;
+
+&lt;p&gt;Suspendisse a tincidunt lacus. Curabitur at urna sagittis, dictum ante sit amet, euismod magna. Sed rutrum massa id tortor commodo, vitae elementum turpis tempus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean purus turpis, venenatis a ullamcorper nec, tincidunt et massa. Integer posuere quam rutrum arcu vehicula imperdiet. Mauris ullamcorper quam vitae purus congue, quis euismod magna eleifend. Vestibulum semper vel augue eget tincidunt. Fusce eget justo sodales, dapibus odio eu, ultrices lorem. Duis condimentum lorem id eros commodo, in facilisis mauris scelerisque. Morbi sed auctor leo. Nullam volutpat a lacus quis pharetra. Nulla congue rutrum magna a ornare.&lt;/p&gt;
+
+&lt;p&gt;Aliquam in turpis accumsan, malesuada nibh ut, hendrerit justo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque sed erat nec justo posuere suscipit. Donec ut efficitur arcu, in malesuada neque. Nunc dignissim nisl massa, id vulputate nunc pretium nec. Quisque eget urna in risus suscipit ultricies. Pellentesque odio odio, tincidunt in eleifend sed, posuere a diam. Nam gravida nisl convallis semper elementum. Morbi vitae felis faucibus, vulputate orci placerat, aliquet nisi. Aliquam erat volutpat. Maecenas sagittis pulvinar purus, sed porta quam laoreet at.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>A Person Re-Identification System For Mobile Devices</title>
+      <link>/publication/person-re-id/</link>
+      <pubDate>Tue, 01 Sep 2015 00:00:00 +0100</pubDate>
+      
+      <guid>/publication/person-re-id/</guid>
+      <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Mobile visual clothing search</title>
+      <link>/publication/clothing-search/</link>
+      <pubDate>Mon, 01 Jul 2013 00:00:00 +0100</pubDate>
+      
+      <guid>/publication/clothing-search/</guid>
+      <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Slides</title>
+      <link>/slides/example-slides/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/slides/example-slides/</guid>
+      <description>
+
+&lt;h1 id=&#34;welcome-to-slides&#34;&gt;Welcome to Slides&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://sourcethemes.com/academic/&#34; target=&#34;_blank&#34;&gt;Academic&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;features&#34;&gt;Features&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Efficiently write slides in Markdown&lt;/li&gt;
+&lt;li&gt;3-in-1: Create, Present, and Publish your slides&lt;/li&gt;
+&lt;li&gt;Supports speaker notes&lt;/li&gt;
+&lt;li&gt;Mobile friendly slides&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;controls&#34;&gt;Controls&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Next: &lt;code&gt;Right Arrow&lt;/code&gt; or &lt;code&gt;Space&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Previous: &lt;code&gt;Left Arrow&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Start: &lt;code&gt;Home&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Finish: &lt;code&gt;End&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Overview: &lt;code&gt;Esc&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Speaker notes: &lt;code&gt;S&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Fullscreen: &lt;code&gt;F&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Zoom: &lt;code&gt;Alt + Click&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/hakimel/reveal.js#pdf-export&#34; target=&#34;_blank&#34;&gt;PDF Export&lt;/a&gt;: &lt;code&gt;E&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;code-highlighting&#34;&gt;Code Highlighting&lt;/h2&gt;
+
+&lt;p&gt;Inline code: &lt;code&gt;variable&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Code block:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;porridge = &amp;quot;blueberry&amp;quot;
+if porridge == &amp;quot;blueberry&amp;quot;:
+    print(&amp;quot;Eating...&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;math&#34;&gt;Math&lt;/h2&gt;
+
+&lt;p&gt;In-line math: $x + y = z$&lt;/p&gt;
+
+&lt;p&gt;Block math:&lt;/p&gt;
+
+&lt;p&gt;$$
+f\left( x \right) = \;\frac{{2\left( {x + 4} \right)\left( {x - 4} \right)}}{{\left( {x + 4} \right)\left( {x + 1} \right)}}
+$$&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;fragments&#34;&gt;Fragments&lt;/h2&gt;
+
+&lt;p&gt;Make content appear incrementally&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{{% fragment %}} One {{% /fragment %}}
+{{% fragment %}} **Two** {{% /fragment %}}
+{{% fragment %}} Three {{% /fragment %}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Press &lt;code&gt;Space&lt;/code&gt; to play!&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&#34;fragment &#34; &gt;
+  One
+&lt;/span&gt;
+&lt;span class=&#34;fragment &#34; &gt;
+  &lt;strong&gt;Two&lt;/strong&gt;
+&lt;/span&gt;
+&lt;span class=&#34;fragment &#34; &gt;
+  Three
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;A fragment can accept two optional parameters:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;class&lt;/code&gt;: use a custom style (requires definition in custom CSS)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;weight&lt;/code&gt;: sets the order in which a fragment appears&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;speaker-notes&#34;&gt;Speaker Notes&lt;/h2&gt;
+
+&lt;p&gt;Add speaker notes to your presentation&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-markdown&#34;&gt;{{% speaker_note %}}
+- Only the speaker can read these notes
+- Press `S` key to view
+{{% /speaker_note %}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Press the &lt;code&gt;S&lt;/code&gt; key to view the speaker notes!&lt;/p&gt;
+
+&lt;aside class=&#34;notes&#34;&gt;
+  &lt;ul&gt;
+&lt;li&gt;Only the speaker can read these notes&lt;/li&gt;
+&lt;li&gt;Press &lt;code&gt;S&lt;/code&gt; key to view&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/aside&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;themes&#34;&gt;Themes&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;black: Black background, white text, blue links (default)&lt;/li&gt;
+&lt;li&gt;white: White background, black text, blue links&lt;/li&gt;
+&lt;li&gt;league: Gray background, white text, blue links&lt;/li&gt;
+&lt;li&gt;beige: Beige background, dark text, brown links&lt;/li&gt;
+&lt;li&gt;sky: Blue background, thin dark text, blue links&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;night: Black background, thick white text, orange links&lt;/li&gt;
+&lt;li&gt;serif: Cappuccino background, gray text, brown links&lt;/li&gt;
+&lt;li&gt;simple: White background, black text, blue links&lt;/li&gt;
+&lt;li&gt;solarized: Cream-colored background, dark green text, blue links&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+
+&lt;section data-noprocess data-shortcode-slide
+  
+      
+      data-background-image=&#34;/img/boards.jpg&#34;
+  &gt;
+
+
+&lt;h2 id=&#34;custom-slide&#34;&gt;Custom Slide&lt;/h2&gt;
+
+&lt;p&gt;Customize the slide style and background&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-markdown&#34;&gt;{{&amp;lt; slide background-image=&amp;quot;/img/boards.jpg&amp;quot; &amp;gt;}}
+{{&amp;lt; slide background-color=&amp;quot;#0000FF&amp;quot; &amp;gt;}}
+{{&amp;lt; slide class=&amp;quot;my-style&amp;quot; &amp;gt;}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;custom-css-example&#34;&gt;Custom CSS Example&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s make headers navy colored.&lt;/p&gt;
+
+&lt;p&gt;Create &lt;code&gt;assets/css/reveal_custom.css&lt;/code&gt; with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;.reveal section h1,
+.reveal section h2,
+.reveal section h3 {
+  color: navy;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&#34;questions&#34;&gt;Questions?&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://discourse.gohugo.io&#34; target=&#34;_blank&#34;&gt;Ask&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://sourcethemes.com/academic/docs/&#34; target=&#34;_blank&#34;&gt;Documentation&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
