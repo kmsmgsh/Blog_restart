@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.1.0">
+  <meta name="generator" content="Hugo 0.54.0" />
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Jiaming Shen">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="首先是在devtools::load_all(“.”)的时候的一个坑，因为mac系统默认的clang不支持-fopenmp, 为了支持得下其他的编译器，比如llvm的clang,然后对R的设定进行修改，对电脑默认文件夹（大概是R的环境变量？）指定编译器：
+CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang&#43;&#43; CXX11=/usr/local/opt/llvm/bin/clang&#43;&#43; 来自于淼大人的博客 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用devtools::load_all(&quot;.&quot;)就不会报错了。
+然后在写BayesJMCM的Rcpp版本的时候遇到的第二个坑是Rcpp::NumericVector和Rcpp::NumericMatrix到arma::vec和arma::mat之间的转换。按Dirk Eddelbuettel大人的写法是
+Rcpp::NumericVector yr(ys); Rcpp::NumericMatrix Xr(XS); int n=Xr.nrow(),k=Xr,ncol(); arma::mat X(Xr.begin(),n,k,false); arma::colvec y(yr.begin(),yr.size(),false); 这个是属于armadillo语法手册中“advanced constructor”的用法，However, if copy_aux_mem is set to false, the vector will instead directly use the auxiliary memory (ie. no copying); this is faster, but can be dangerous unless you know what you are doing! ，这个false就是初始化是否copy自该内存空间，如果是false的话就不copy，直接用的是when strict is set to false, the vector will use the auxiliary memory until a size change，也就不分配额外的内存空间，达成重用原始内容，因为大概毕竟底层的结构都是std::vector。">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/rcpp/">
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css" integrity="sha384-aOkxzJ5uQz7WBObEZcHvV5JvRW3TUc2rNPA7pe3AwnsUohiw1Vj2Rgx2KSOkF5+h" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+  
+
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:400,400italic,700|Roboto+Mono">
+  
+
+  <link rel="stylesheet" href="/styles.css">
+  
+
+  
+  
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Academic">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Academic">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/rcpp/">
+
+  
+  
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Academic">
+  <meta property="og:url" content="/post/rcpp/">
+  <meta property="og:title" content="Rcpp使用记录 | Academic">
+  <meta property="og:description" content="首先是在devtools::load_all(“.”)的时候的一个坑，因为mac系统默认的clang不支持-fopenmp, 为了支持得下其他的编译器，比如llvm的clang,然后对R的设定进行修改，对电脑默认文件夹（大概是R的环境变量？）指定编译器：
+CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang&#43;&#43; CXX11=/usr/local/opt/llvm/bin/clang&#43;&#43; 来自于淼大人的博客 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用devtools::load_all(&quot;.&quot;)就不会报错了。
+然后在写BayesJMCM的Rcpp版本的时候遇到的第二个坑是Rcpp::NumericVector和Rcpp::NumericMatrix到arma::vec和arma::mat之间的转换。按Dirk Eddelbuettel大人的写法是
+Rcpp::NumericVector yr(ys); Rcpp::NumericMatrix Xr(XS); int n=Xr.nrow(),k=Xr,ncol(); arma::mat X(Xr.begin(),n,k,false); arma::colvec y(yr.begin(),yr.size(),false); 这个是属于armadillo语法手册中“advanced constructor”的用法，However, if copy_aux_mem is set to false, the vector will instead directly use the auxiliary memory (ie. no copying); this is faster, but can be dangerous unless you know what you are doing! ，这个false就是初始化是否copy自该内存空间，如果是false的话就不copy，直接用的是when strict is set to false, the vector will use the auxiliary memory until a size change，也就不分配额外的内存空间，达成重用原始内容，因为大概毕竟底层的结构都是std::vector。"><meta property="og:image" content="/img/icon-192.png">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2019-07-31T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2019-07-31T00:00:00&#43;00:00">
+  
+
+  
+
+  
+
+  <title>Rcpp使用记录 | Academic</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#TableOfContents" data-offset="71" >
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" role="textbox" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+<nav class="navbar navbar-light fixed-top navbar-expand-lg py-0" id="navbar-main">
+  <div class="container">
+
+    
+      <a class="navbar-brand" href="/">Academic</a>
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+    
+    <div class="collapse navbar-collapse" id="navbar">
+
+      
+      
+      <ul class="navbar-nav mr-auto">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#featured">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/slides/">
+            
+            <span>Slides</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#Notes">
+            
+            <span>Notes</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+      
+      </ul>
+      <ul class="navbar-nav ml-auto">
+      
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+        </li>
+        
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1 itemprop="name">Rcpp使用记录</h1>
+
+  
+
+  
+    
+
+
+
+<meta content="2019-07-31 00:00:00 &#43;0000 UTC" itemprop="datePublished">
+<meta content="2019-07-31 00:00:00 &#43;0000 UTC" itemprop="dateModified">
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    <time>Jul 31, 2019</time>
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 min read
+  </span>
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <a href="/post/rcpp/#disqus_thread"></a>
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder"></i>
+    
+    <a href="/categories/rcpp/">Rcpp</a>, 
+    
+    <a href="/categories/package/">Package</a>
+    
+  </span>
+  
+  
+
+  
+    
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Rcpp%e4%bd%bf%e7%94%a8%e8%ae%b0%e5%bd%95&amp;url=%2fpost%2frcpp%2f"
+         target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fpost%2frcpp%2f"
+         target="_blank" rel="noopener">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fpost%2frcpp%2f&amp;title=Rcpp%e4%bd%bf%e7%94%a8%e8%ae%b0%e5%bd%95"
+         target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fpost%2frcpp%2f&amp;title=Rcpp%e4%bd%bf%e7%94%a8%e8%ae%b0%e5%bd%95"
+         target="_blank" rel="noopener">
+        <i class="fab fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Rcpp%e4%bd%bf%e7%94%a8%e8%ae%b0%e5%bd%95&amp;body=%2fpost%2frcpp%2f">
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style" itemprop="articleBody">
+      
+
+
+<p>首先是在devtools::load_all(“.”)的时候的一个坑，因为mac系统默认的clang不支持-fopenmp,
+为了支持得下其他的编译器，比如<a href="http://clang.llvm.org/get_started.html">llvm的clang</a>,然后对R的设定进行修改，对电脑默认文件夹（大概是R的环境变量？）指定编译器：</p>
+<pre><code>CC=/usr/local/opt/llvm/bin/clang
+CXX=/usr/local/opt/llvm/bin/clang++
+CXX11=/usr/local/opt/llvm/bin/clang++</code></pre>
+<p>来自<a href="https://yufree.cn/cn/2019/02/14/compiler/">于淼大人的博客</a> 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用<code>devtools::load_all(&quot;.&quot;)</code>就不会报错了。</p>
+<p>然后在写BayesJMCM的Rcpp版本的时候遇到的第二个坑是Rcpp::NumericVector和Rcpp::NumericMatrix到arma::vec和arma::mat之间的转换。按Dirk Eddelbuettel大人的写法是</p>
+<pre><code>Rcpp::NumericVector yr(ys);
+Rcpp::NumericMatrix Xr(XS);
+int n=Xr.nrow(),k=Xr,ncol();
+arma::mat X(Xr.begin(),n,k,false);
+arma::colvec y(yr.begin(),yr.size(),false);</code></pre>
+<p>这个是属于<a href="http://arma.sourceforge.net/docs.html#Col">armadillo语法手册</a>中“advanced constructor”的用法，However, if copy_aux_mem is set to false, the vector will instead directly use the auxiliary memory (ie. no copying); this is faster, but can be dangerous unless you know what you are doing! ，这个false就是初始化是否copy自该内存空间，如果是false的话就不copy，直接用的是when strict is set to false, the vector will use the auxiliary memory until a size change，也就不分配额外的内存空间，达成重用原始内容，因为大概毕竟底层的结构都是std::vector。</p>
+<p>但是由于我代码是一部分一部分重写的，所以每个函数都是Rcpp::List的输入和输出，所以充满了大量的不必要的显式转换(因为编译器报错)，和隐式转换（编译器没报错，比如返回Rcpp::list使用List::create的时候直接=一个arma::vec和arma::mat）。</p>
+<p>这块应该统一一下，比如只用Rcpp::NumericVector和NumericMatrix在一开始从R接受数据的时候，和返回的时候（隐式）。</p>
+<p>这时候如果放弃使用Rcpp::List做黏胶把要返回的东西（例如两个矩阵），黏在一起的话，得考虑新的东西，比如用<a href="https://stackoverflow.com/questions/41707298/return-multiple-matrices-in-c-armadillo-library">std::tuple和ties可能是一个解决方案</a>,但是不是很确定，不过既然armadillo是从这继承的应该问题不大。</p>
+<p>第三个坑是，还是在devtools::load_all(“.”)里面，提示</p>
+<pre><code>Error in getDLLRegisteredRoutines.DLLInfo(dll, addNames = FALSE) : 
+  must specify DLL via a “DLLInfo” object. See getLoadedDLLs()</code></pre>
+<p>这个应该怎么设置？搜索一下没找到太具体的做法，改天继续试，索性一禁了之,把namespace文件里面的<code>useDynLib(packageName, .registration=TRUE)</code>,变成<code>useDynLib(packageName)</code>。
+但是如果按<a href="https://ironholds.org/registering-routines/">这篇文章</a>的说法，好像不注册就不能用，不知道下面这个问题和这个有没有关系</p>
+<pre><code>Error in .Call(&quot;_BayesJMCM_beta_result_cpp&quot;, PACKAGE = &quot;BayesJMCM&quot;, data,  : 
+  &quot;_BayesJMCM_beta_result_cpp&quot; not available for .Call() for package &quot;BayesJMCM&quot;</code></pre>
+<p>但是暂时不知道咋解决，强行SourceCpp用了还行，从40s左右变成7s左右。</p>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/rcpp/">Rcpp</a>
+  
+</div>
+
+
+
+
+    
+      
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<div class="media author-card" itemscope itemtype="http://schema.org/Person">
+  
+  
+  <img class="portrait mr-3" src="/author/admin/avatar_hu52a603635ecebd45650b162dadabb4e5_12861_250x250_fill_q90_lanczos_center.jpg" itemprop="image" alt="Avatar">
+  
+
+  <div class="media-body">
+    <h5 class="card-title" itemprop="name"><a href="/authors/admin">Jiaming Shen</a></h5>
+    <h6 class="card-subtitle">PhD candidate in statistics</h6>
+    <p class="card-text" itemprop="description">My research interests include Longitudinal data anlaysis, parallel computing, MCMC methods.</p>
+    <ul class="network-icon" aria-hidden="true">
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="/#contact" >
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://twitter.com/User" target="_blank" rel="noopener">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://scholar.google.co.uk/" target="_blank" rel="noopener">
+          <i class="ai ai-google-scholar"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://github.com/kmsmgsh" target="_blank" rel="noopener">
+          <i class="fab fa-github"></i>
+        </a>
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+
+      
+      
+    
+
+    
+
+    
+<section id="comments">
+  <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "jia-ming-org" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+  </div>
+</article>
+
+<div class="container">
+  <footer class="site-footer">
+  
+  <p class="powered-by">
+    <a href="/privacy/">Privacy Policy</a>
+  </p>
+  
+
+  <p class="powered-by">
+    
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+</div>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+        
+      
+
+      
+      
+    
+
+    
+    
+
+    
+    
+    
+    <script id="dsq-count-scr" src="//jia-ming-org.disqus.com/count.js" async></script>
+    
+
+    
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script>
+      const search_index_filename = "/index.json";
+      const i18n = {
+        'placeholder': "Search...",
+        'results': "results found",
+        'no_results': "No results found"
+      };
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.d7381f2d79e6271d4da28f474f49096c.js"></script>
+
+  </body>
+</html>
+

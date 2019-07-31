@@ -33,7 +33,7 @@
   <meta name="description" content="PhD candidate in statistics">
 
   
-  <link rel="alternate" hreflang="en-us" href="/categories/">
+  <link rel="alternate" hreflang="en-us" href="/categories/rcpp/">
 
   
 
@@ -100,15 +100,15 @@
   
 
   
-  <link rel="alternate" href="/categories/index.xml" type="application/rss+xml" title="Academic">
-  <link rel="feed" href="/categories/index.xml" type="application/rss+xml" title="Academic">
+  <link rel="alternate" href="/categories/rcpp/index.xml" type="application/rss+xml" title="Academic">
+  <link rel="feed" href="/categories/rcpp/index.xml" type="application/rss+xml" title="Academic">
   
 
   <link rel="manifest" href="/site.webmanifest">
   <link rel="icon" type="image/png" href="/img/icon.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="/categories/">
+  <link rel="canonical" href="/categories/rcpp/">
 
   
   
@@ -120,19 +120,19 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Academic">
-  <meta property="og:url" content="/categories/">
-  <meta property="og:title" content="Categories | Academic">
+  <meta property="og:url" content="/categories/rcpp/">
+  <meta property="og:title" content="Rcpp | Academic">
   <meta property="og:description" content="PhD candidate in statistics"><meta property="og:image" content="/img/icon-192.png">
   <meta property="og:locale" content="en-us">
   
-  
-  
-
+  <meta property="og:updated_time" content="2019-07-31T00:00:00&#43;00:00">
   
 
   
 
-  <title>Categories | Academic</title>
+  
+
+  <title>Rcpp | Academic</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#TableOfContents" data-offset="71" >
@@ -332,7 +332,7 @@
     
   
 <div class="universal-wrapper pt-3">
-  <h1 itemprop="name">Categories</h1>
+  <h1 itemprop="name">Rcpp</h1>
 
   
 
@@ -347,22 +347,13 @@
   
   
   <div>
-    <h2><a href="/categories/package/">Package</a></h2>
+    <h2><a href="/post/rcpp/">Rcpp使用记录</a></h2>
     <div class="article-style">
       
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/categories/rcpp/">Rcpp</a></h2>
-    <div class="article-style">
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></h2>
-    <div class="article-style">
+      首先是在devtools::load_all(“.”)的时候的一个坑，因为mac系统默认的clang不支持-fopenmp, 为了支持得下其他的编译器，比如llvm的clang,然后对R的设定进行修改，对电脑默认文件夹（大概是R的环境变量？）指定编译器：
+CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ CXX11=/usr/local/opt/llvm/bin/clang++ 来自于淼大人的博客 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用devtools::load_all(&quot;.&quot;)就不会报错了。
+然后在写BayesJMCM的Rcpp版本的时候遇到的第二个坑是Rcpp::NumericVector和Rcpp::NumericMatrix到arma::vec和arma::mat之间的转换。按Dirk Eddelbuettel大人的写法是
+Rcpp::NumericVector yr(ys); Rcpp::NumericMatrix Xr(XS); int n=Xr.nrow(),k=Xr,ncol(); arma::mat X(Xr.begin(),n,k,false); arma::colvec y(yr.begin(),yr.size(),false); 这个是属于armadillo语法手册中“advanced constructor”的用法，However, if copy_aux_mem is set to false, the vector will instead directly use the auxiliary memory (ie. no copying); this is faster, but can be dangerous unless you know what you are doing! ，这个false就是初始化是否copy自该内存空间，如果是false的话就不copy，直接用的是when strict is set to false, the vector will use the auxiliary memory until a size change，也就不分配额外的内存空间，达成重用原始内容，因为大概毕竟底层的结构都是std::vector。
       
     </div>
   </div>

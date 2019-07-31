@@ -36,6 +36,42 @@
     </item>
     
     <item>
+      <title>Rcpp使用记录</title>
+      <link>/post/rcpp/</link>
+      <pubDate>Wed, 31 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/rcpp/</guid>
+      <description>
+
+
+&lt;p&gt;首先是在devtools::load_all(“.”)的时候的一个坑，因为mac系统默认的clang不支持-fopenmp,
+为了支持得下其他的编译器，比如&lt;a href=&#34;http://clang.llvm.org/get_started.html&#34;&gt;llvm的clang&lt;/a&gt;,然后对R的设定进行修改，对电脑默认文件夹（大概是R的环境变量？）指定编译器：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;CC=/usr/local/opt/llvm/bin/clang
+CXX=/usr/local/opt/llvm/bin/clang++
+CXX11=/usr/local/opt/llvm/bin/clang++&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;来自&lt;a href=&#34;https://yufree.cn/cn/2019/02/14/compiler/&#34;&gt;于淼大人的博客&lt;/a&gt; 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用&lt;code&gt;devtools::load_all(&amp;quot;.&amp;quot;)&lt;/code&gt;就不会报错了。&lt;/p&gt;
+&lt;p&gt;然后在写BayesJMCM的Rcpp版本的时候遇到的第二个坑是Rcpp::NumericVector和Rcpp::NumericMatrix到arma::vec和arma::mat之间的转换。按Dirk Eddelbuettel大人的写法是&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Rcpp::NumericVector yr(ys);
+Rcpp::NumericMatrix Xr(XS);
+int n=Xr.nrow(),k=Xr,ncol();
+arma::mat X(Xr.begin(),n,k,false);
+arma::colvec y(yr.begin(),yr.size(),false);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这个是属于&lt;a href=&#34;http://arma.sourceforge.net/docs.html#Col&#34;&gt;armadillo语法手册&lt;/a&gt;中“advanced constructor”的用法，However, if copy_aux_mem is set to false, the vector will instead directly use the auxiliary memory (ie. no copying); this is faster, but can be dangerous unless you know what you are doing! ，这个false就是初始化是否copy自该内存空间，如果是false的话就不copy，直接用的是when strict is set to false, the vector will use the auxiliary memory until a size change，也就不分配额外的内存空间，达成重用原始内容，因为大概毕竟底层的结构都是std::vector。&lt;/p&gt;
+&lt;p&gt;但是由于我代码是一部分一部分重写的，所以每个函数都是Rcpp::List的输入和输出，所以充满了大量的不必要的显式转换(因为编译器报错)，和隐式转换（编译器没报错，比如返回Rcpp::list使用List::create的时候直接=一个arma::vec和arma::mat）。&lt;/p&gt;
+&lt;p&gt;这块应该统一一下，比如只用Rcpp::NumericVector和NumericMatrix在一开始从R接受数据的时候，和返回的时候（隐式）。&lt;/p&gt;
+&lt;p&gt;这时候如果放弃使用Rcpp::List做黏胶把要返回的东西（例如两个矩阵），黏在一起的话，得考虑新的东西，比如用&lt;a href=&#34;https://stackoverflow.com/questions/41707298/return-multiple-matrices-in-c-armadillo-library&#34;&gt;std::tuple和ties可能是一个解决方案&lt;/a&gt;,但是不是很确定，不过既然armadillo是从这继承的应该问题不大。&lt;/p&gt;
+&lt;p&gt;第三个坑是，还是在devtools::load_all(“.”)里面，提示&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Error in getDLLRegisteredRoutines.DLLInfo(dll, addNames = FALSE) : 
+  must specify DLL via a “DLLInfo” object. See getLoadedDLLs()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这个应该怎么设置？搜索一下没找到太具体的做法，改天继续试，索性一禁了之,把namespace文件里面的&lt;code&gt;useDynLib(packageName, .registration=TRUE)&lt;/code&gt;,变成&lt;code&gt;useDynLib(packageName)&lt;/code&gt;。
+但是如果按&lt;a href=&#34;https://ironholds.org/registering-routines/&#34;&gt;这篇文章&lt;/a&gt;的说法，好像不注册就不能用，不知道下面这个问题和这个有没有关系&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Error in .Call(&amp;quot;_BayesJMCM_beta_result_cpp&amp;quot;, PACKAGE = &amp;quot;BayesJMCM&amp;quot;, data,  : 
+  &amp;quot;_BayesJMCM_beta_result_cpp&amp;quot; not available for .Call() for package &amp;quot;BayesJMCM&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;但是暂时不知道咋解决，强行SourceCpp用了还行，从40s左右变成7s左右。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>好多坑，Hugo,academic, math and etc...</title>
       <link>/post/hugo-academic-math-and-etc/</link>
       <pubDate>Sun, 24 Mar 2019 00:00:00 +0000</pubDate>
