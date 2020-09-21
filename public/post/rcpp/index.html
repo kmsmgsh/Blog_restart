@@ -29,7 +29,7 @@
     
   
   <meta name="description" content="首先是在devtools::load_all(“.”)的时候的一个坑，因为mac系统默认的clang不支持-fopenmp, 为了支持得下其他的编译器，比如llvm的clang,然后对R的设定进行修改，对电脑默认文件夹（大概是R的环境变量？）指定编译器：
-CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang&#43;&#43; CXX11=/usr/local/opt/llvm/bin/clang&#43;&#43; 来自于淼大人的博客 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用devtools::load_all(&quot;.&quot;)就不会报错了。
+CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang&#43;&#43; CXX11=/usr/local/opt/llvm/bin/clang&#43;&#43; 来自于淼大人的博客 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用devtools::load_all(&#34;.&#34;)就不会报错了。
 然后在写BayesJMCM的Rcpp版本的时候遇到的第二个坑是Rcpp::NumericVector和Rcpp::NumericMatrix到arma::vec和arma::mat之间的转换。按Dirk Eddelbuettel大人的写法是
 Rcpp::NumericVector yr(ys); Rcpp::NumericMatrix Xr(XS); int n=Xr.nrow(),k=Xr,ncol(); arma::mat X(Xr.begin(),n,k,false); arma::colvec y(yr.begin(),yr.size(),false); 这个是属于armadillo语法手册中“advanced constructor”的用法，However, if copy_aux_mem is set to false, the vector will instead directly use the auxiliary memory (ie. no copying); this is faster, but can be dangerous unless you know what you are doing! ，这个false就是初始化是否copy自该内存空间，如果是false的话就不copy，直接用的是when strict is set to false, the vector will use the auxiliary memory until a size change，也就不分配额外的内存空间，达成重用原始内容，因为大概毕竟底层的结构都是std::vector。">
 
@@ -124,7 +124,7 @@ Rcpp::NumericVector yr(ys); Rcpp::NumericMatrix Xr(XS); int n=Xr.nrow(),k=Xr,nco
   <meta property="og:url" content="/post/rcpp/">
   <meta property="og:title" content="Rcpp使用记录 | Academic">
   <meta property="og:description" content="首先是在devtools::load_all(“.”)的时候的一个坑，因为mac系统默认的clang不支持-fopenmp, 为了支持得下其他的编译器，比如llvm的clang,然后对R的设定进行修改，对电脑默认文件夹（大概是R的环境变量？）指定编译器：
-CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang&#43;&#43; CXX11=/usr/local/opt/llvm/bin/clang&#43;&#43; 来自于淼大人的博客 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用devtools::load_all(&quot;.&quot;)就不会报错了。
+CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang&#43;&#43; CXX11=/usr/local/opt/llvm/bin/clang&#43;&#43; 来自于淼大人的博客 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用devtools::load_all(&#34;.&#34;)就不会报错了。
 然后在写BayesJMCM的Rcpp版本的时候遇到的第二个坑是Rcpp::NumericVector和Rcpp::NumericMatrix到arma::vec和arma::mat之间的转换。按Dirk Eddelbuettel大人的写法是
 Rcpp::NumericVector yr(ys); Rcpp::NumericMatrix Xr(XS); int n=Xr.nrow(),k=Xr,ncol(); arma::mat X(Xr.begin(),n,k,false); arma::colvec y(yr.begin(),yr.size(),false); 这个是属于armadillo语法手册中“advanced constructor”的用法，However, if copy_aux_mem is set to false, the vector will instead directly use the auxiliary memory (ie. no copying); this is faster, but can be dangerous unless you know what you are doing! ，这个false就是初始化是否copy自该内存空间，如果是false的话就不copy，直接用的是when strict is set to false, the vector will use the auxiliary memory until a size change，也就不分配额外的内存空间，达成重用原始内容，因为大概毕竟底层的结构都是std::vector。"><meta property="og:image" content="/img/icon-192.png">
   <meta property="og:locale" content="en-us">
@@ -466,6 +466,7 @@ Rcpp::NumericVector yr(ys); Rcpp::NumericMatrix Xr(XS); int n=Xr.nrow(),k=Xr,nco
 
     <div class="article-style" itemprop="articleBody">
       
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>首先是在devtools::load_all(“.”)的时候的一个坑，因为mac系统默认的clang不支持-fopenmp,
@@ -473,7 +474,7 @@ Rcpp::NumericVector yr(ys); Rcpp::NumericMatrix Xr(XS); int n=Xr.nrow(),k=Xr,nco
 <pre><code>CC=/usr/local/opt/llvm/bin/clang
 CXX=/usr/local/opt/llvm/bin/clang++
 CXX11=/usr/local/opt/llvm/bin/clang++</code></pre>
-<p>来自<a href="https://yufree.cn/cn/2019/02/14/compiler/">于淼大人的博客</a> 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用<code>devtools::load_all(&quot;.&quot;)</code>就不会报错了。</p>
+<p>来自<a href="https://yufree.cn/cn/2019/02/14/compiler/">于淼大人的博客</a> 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用<code>devtools::load_all(".")</code>就不会报错了。</p>
 <p>然后在写BayesJMCM的Rcpp版本的时候遇到的第二个坑是Rcpp::NumericVector和Rcpp::NumericMatrix到arma::vec和arma::mat之间的转换。按Dirk Eddelbuettel大人的写法是</p>
 <pre><code>Rcpp::NumericVector yr(ys);
 Rcpp::NumericMatrix Xr(XS);
@@ -644,10 +645,6 @@ arma::colvec y(yr.begin(),yr.size(),false);</code></pre>
 
 <div class="container">
   <footer class="site-footer">
-  
-  <p class="powered-by">
-    <a href="/privacy/">Privacy Policy</a>
-  </p>
   
 
   <p class="powered-by">

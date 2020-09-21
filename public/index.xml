@@ -36,6 +36,155 @@
     </item>
     
     <item>
+      <title>使用Horseshoe 先验的Bayes回归及代码解析</title>
+      <link>/post/horseshoe-bayes/</link>
+      <pubDate>Mon, 21 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/horseshoe-bayes/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;使用horseshoe-先验的bayes回归及代码解析&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;使用Horseshoe 先验的Bayes回归及代码解析&lt;/h1&gt;
+&lt;p&gt;Horseshoe prior是一种稀疏bayes监督学习的方法。通过对模型参数的先验分布中加入稀疏特征，从而得到稀疏的估计。&lt;/p&gt;
+&lt;p&gt;horseshoe prior属于multivariate scale mixtures of normals的分布族。所以和其他常用的稀疏bayes学习方法，Laplacian prior, (Lasso), Student-t prior，非常类似。&lt;/p&gt;
+&lt;p&gt;在回归问题下的模型假设：
+&lt;span class=&#34;math display&#34;&gt;\[
+y=X\beta+\epsilon, \epsilon\sim N(0,\sigma^2)\\
+\beta_j \sim N(0,\sigma^2 \lambda_j^2 \tau^2)\\
+\lambda_j \sim Half-Cauchy(0,1)
+\]&lt;/span&gt;
+可以额外加上以下超参数模型
+&lt;span class=&#34;math display&#34;&gt;\[
+\tau \sim Half-Cauchy (0,1)\\
+\sigma^2 \sim 1/\sigma^2
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;其中&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt; 叫做local shrinkage parameter，局部压缩参数，对于不同的&lt;span class=&#34;math inline&#34;&gt;\(\theta_j\)&lt;/span&gt;可以有不同的压缩系数，&lt;span class=&#34;math inline&#34;&gt;\(\tau\)&lt;/span&gt; 叫做global shrinkage parameter&lt;/p&gt;
+&lt;p&gt;叫horseshoe，马蹄的原因大概是shrinkage weights的图像呈现马蹄形。&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;citation&#34;&gt;@carlson&lt;/span&gt; 2010 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。&lt;/p&gt;
+&lt;p&gt;这篇文章给出了一个用于判断各种压缩先验性质的方法:
+&lt;span class=&#34;math display&#34;&gt;\[
+E\left(\theta_{i} \mid y\right)=\int_{0}^{1}\left(1-\kappa_{i}\right) y_{i} p\left(\kappa_{i} \mid y\right) \mathrm{d} \kappa_{i}=\left\{1-E\left(\kappa_{i} \mid y\right)\right\} y_{i}
+\]&lt;/span&gt;
+在这种情况下, &lt;span class=&#34;math inline&#34;&gt;\(E(\kappa_i|y)\)&lt;/span&gt; 就是压缩率。&lt;/p&gt;
+&lt;p&gt;而horseshoe prior在这个指标下就相对很优秀：对于很小的参数，压缩效果明显，对于相对比较大的参数，几乎不压缩。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/web/packages/horseshoe/index.html&#34;&gt;R包horseshoe&lt;/a&gt;提供了horseshoe estimator的计算函数，而本文主要目的就是对&lt;a href=&#34;https://github.com/cran/horseshoe/blob/master/R/horseshoe.R&#34;&gt;horseshoe.R&lt;/a&gt;中的算法进行整合和解析。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;horseshoe = function(y,X, method.tau = c(&amp;quot;fixed&amp;quot;, &amp;quot;truncatedCauchy&amp;quot;,&amp;quot;halfCauchy&amp;quot;), tau = 1,
+                     method.sigma = c(&amp;quot;fixed&amp;quot;, &amp;quot;Jeffreys&amp;quot;), Sigma2 = 1,
+                     burn = 1000, nmc = 5000, thin = 1, alpha = 0.05)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;函数的定义，对于 &lt;span class=&#34;math inline&#34;&gt;\(\tau\)&lt;/span&gt; 可以选择常数，截尾柯西分布和半柯西分布，默认的tau是1，同样 &lt;span class=&#34;math inline&#34;&gt;\(\sigma\)&lt;/span&gt; 也可以选择固定值和Jeffreys prior (&lt;span class=&#34;math inline&#34;&gt;\(\sim 1/\sigma^2\)&lt;/span&gt;) 。&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;if(p&amp;gt;n)
+    algo=1
+  else
+    algo=2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在函数介绍中就有，当p&amp;gt;n时，使用的是Bhattacharya et.al. (2016)的算法，当n&amp;gt;p时，使用的是 Rue (2001)的算法对&lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; 的full conditional posterior distribution进行抽样。&lt;/p&gt;
+&lt;p&gt;因为是Normal-Normal case，conditional on &lt;span class=&#34;math inline&#34;&gt;\(\sigma,\tau,\lambda\)&lt;/span&gt; ,&lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; 是Normal prior加Normal likelihood，所以对于Bayes回归问题，beta的全条件后验分布基本上可以写成:
+&lt;span class=&#34;math display&#34;&gt;\[
+\beta \mid y, \lambda, \tau, \sigma \sim N\left(A^{-1} X^{\mathrm{T}} y, \sigma^{2} A^{-1}\right), \quad A=\left(X^{\mathrm{T}} X+\Lambda_{*}^{-1}\right), \quad \Lambda_{*}=\tau^{2} \operatorname{diag}\left(\lambda_{1}^{2}, \ldots, \lambda_{p}^{2}\right)
+\]&lt;/span&gt;
+这种形式，所以就是用Gibbs算法对&lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; 抽样。&lt;/p&gt;
+&lt;p&gt;现在介绍在p&amp;gt;n情况下的算法。&lt;/p&gt;
+&lt;p&gt;来源于Bhattacharya. et.al. (2016)，&lt;/p&gt;
+&lt;p&gt;假设我们要从&lt;span class=&#34;math inline&#34;&gt;\(N(\mu,\Sigma)\)&lt;/span&gt;中抽样，有
+&lt;span class=&#34;math display&#34;&gt;\[
+\Sigma=\left(\Phi^{\mathrm{T}} \Phi+D^{-1}\right)^{-1}, \quad \mu=\Sigma \Phi^{\mathrm{T}} \alpha
+\]&lt;/span&gt;
+算法如下&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;抽 &lt;span class=&#34;math inline&#34;&gt;\(u\sim N(0,D)\)&lt;/span&gt; , &lt;span class=&#34;math inline&#34;&gt;\(\delta\sim N(0,I_n)\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;令 &lt;span class=&#34;math inline&#34;&gt;\(v=\Phi u+\delta\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;解线性方程&lt;span class=&#34;math inline&#34;&gt;\((\Phi D \Phi^T+I_n)w=(\alpha-v)\)&lt;/span&gt; 得到w&lt;/li&gt;
+&lt;li&gt;令&lt;span class=&#34;math inline&#34;&gt;\(\theta=u+D\Phi^T w\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;算法的推导过程是：&lt;/p&gt;
+&lt;p&gt;我们目标是从&lt;span class=&#34;math inline&#34;&gt;\(N(\mu,\Sigma)\)&lt;/span&gt; 中进行抽样，由于
+&lt;span class=&#34;math display&#34;&gt;\[
+\Sigma=(\Phi^T\Phi+D^{-1})^{-1}=D-D\Phi(\Phi D\Phi^T+I_n^{-1})^{-1}\Phi D
+\]&lt;/span&gt;
+那么第一块D，则可以通过抽&lt;span class=&#34;math inline&#34;&gt;\(u\sim N(0,D)\)&lt;/span&gt; 直接得到，也就是算法第4步中的&lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;. 问题就是怎么得到第二块。&lt;/p&gt;
+&lt;p&gt;第二块等于
+&lt;span class=&#34;math display&#34;&gt;\[
+\begin{align*}
+&amp;amp;D\Phi(\Phi D\Phi^T+I_n^{-1})^{-1}\Phi D\\
+=&amp;amp;D\Phi^T(\Phi D\Phi^T+I_n)^{-1}(\Phi D \Phi ^T+I_n)(\Phi D\Phi^T+I_n)^{-1}\Phi D
+\end{align*}
+\]&lt;/span&gt;
+因为
+&lt;span class=&#34;math display&#34;&gt;\[
+\begin{align*}
+\mu&amp;amp;=\Sigma\Phi^T\alpha=(\Phi^T\Phi+D^{-1})^{-1}\Phi^T\alpha=(D\Phi^T-D\Phi^T(\Phi D\Phi^T+I_n)^{-1}\Phi D\Phi^T)\alpha\\
+&amp;amp;=D\Phi^T (\Phi D\Phi^T+I_n)^{-1}\alpha
+\end{align*}
+\]&lt;/span&gt;
+所以相当于只需要对&lt;span class=&#34;math inline&#34;&gt;\(N(0,(\Phi D\Phi^T+I_n))\)&lt;/span&gt; 加上&lt;span class=&#34;math inline&#34;&gt;\(\alpha\)&lt;/span&gt;再做线性变换 &lt;span class=&#34;math inline&#34;&gt;\(D\Phi^T\cdot (\Phi D\Phi^{T}+I_n)^{-1}\)&lt;/span&gt; 就能得到第二块的分布，也就对应算法过程3和4。&lt;/p&gt;
+&lt;p&gt;而为了得到&lt;span class=&#34;math inline&#34;&gt;\(N(0,(\Phi D\Phi^T+I_n))\)&lt;/span&gt;，则只需要对&lt;span class=&#34;math inline&#34;&gt;\(u\sim N(0,D)\)&lt;/span&gt; 乘以&lt;span class=&#34;math inline&#34;&gt;\(\Phi\)&lt;/span&gt; 加&lt;span class=&#34;math inline&#34;&gt;\(\delta \sim N(0,I_n)\)&lt;/span&gt;， 对应算法过程2。&lt;/p&gt;
+&lt;p&gt;这样的算法过程就对应代码：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt; lambda_star=tau*lambda
+      U=as.numeric(lambda_star^2)*t(X)
+      ## step 1 ##
+      u=stats::rnorm(l2,l0,lambda_star)
+      v=X%*%u + stats::rnorm(n)
+      ## step 2 ##
+      v_star=solve((X%*%U+I_n),((y/sqrt(sigma_sq))-v))
+      Beta=sqrt(sigma_sq)*(u+U%*%v_star)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;当p&amp;lt;n,也就是algo==2时则是用经典的Cholesky分解进行抽样，故不再赘述。&lt;/p&gt;
+&lt;p&gt;下一块则是抽取&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt; 的过程，这块算法使用了 Polson. et. al. (2014)的supplement material中，使用Damien et.al. (1999)算法构造的Slice sampler。&lt;/p&gt;
+&lt;p&gt;首先，我们可以写出&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt; 的后验分布：
+&lt;span class=&#34;math display&#34;&gt;\[
+p(\lambda_j|y,\tau,\sigma)\propto \frac{2}{\pi(1+\lambda_j^2)}\cdot \frac{1}{\lambda_j}\cdot exp(-\frac{1}{\lambda_j^2}\frac{\beta_j^2}{2\tau^2\sigma^2} )
+\]&lt;/span&gt;
+做变量代换: &lt;span class=&#34;math inline&#34;&gt;\(\eta_j=1/\lambda_j^2\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\mu_j=\beta_j/(\tau\sigma)\)&lt;/span&gt;. 那么&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt; 的full-conditional distribution转变为&lt;span class=&#34;math inline&#34;&gt;\(\eta_j\)&lt;/span&gt;的 full conditional distribution,由&lt;a href=&#34;https://kmsmgsh.github.io/Notes-in-statistics-and-computing/mathematical-statistic-trick.html#section-2.2&#34;&gt;变量代换公式&lt;/a&gt;:
+&lt;span class=&#34;math display&#34;&gt;\[
+p(\eta_j|y,\tau,\sigma)\propto \frac{1}{\eta_j+1}\cdot exp(-\frac{\mu_j^2}{2}\eta_j)
+\]&lt;/span&gt;
+然后通过Damien et. al. (1999)的Slice sampler:&lt;/p&gt;
+&lt;p&gt;如果要生成密度函数为&lt;span class=&#34;math inline&#34;&gt;\(f\)&lt;/span&gt; 的随机数，&lt;span class=&#34;math inline&#34;&gt;\(f\)&lt;/span&gt; 可以写成如下形式:
+&lt;span class=&#34;math display&#34;&gt;\[
+f(x) \propto \pi(x) \prod_{i=1}^{N} l_{i}(x)
+\]&lt;/span&gt;
+其中&lt;span class=&#34;math inline&#34;&gt;\(\pi(x)\)&lt;/span&gt; 是已知形式的密度函数，&lt;span class=&#34;math inline&#34;&gt;\(l_i\)&lt;/span&gt; 是非负可逆函数，也就是如果有 &lt;span class=&#34;math inline&#34;&gt;\(l_i(x)&amp;gt;u\)&lt;/span&gt;，那么可以反推出&lt;span class=&#34;math inline&#34;&gt;\(A^i_u=\{x:l_i(x)&amp;gt;u \}\)&lt;/span&gt;。那么就可以通过添加辅助变量的方法生成服从&lt;span class=&#34;math inline&#34;&gt;\(f\)&lt;/span&gt; 的随机数。&lt;/p&gt;
+&lt;p&gt;令辅助变量 &lt;span class=&#34;math inline&#34;&gt;\(u_i|x \sim unif (0,l_i(x))\)&lt;/span&gt;, 那么&lt;span class=&#34;math inline&#34;&gt;\(U\)&lt;/span&gt; 和&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt; 的联合分布就是
+&lt;span class=&#34;math display&#34;&gt;\[
+f\left(x, u_{1}, \ldots, u_{N}\right) \propto \pi(x) \prod_{i=1}^{N} I\left\{u_{i}&amp;lt;l_{i}(x)\right\}
+\]&lt;/span&gt;
+这样，关于X的边际分布就是&lt;span class=&#34;math inline&#34;&gt;\(f(x)\)&lt;/span&gt;。我们构造Gibbs sampler，其中&lt;span class=&#34;math inline&#34;&gt;\(u_i\)&lt;/span&gt; 的full conditional distribution就是够早的uniform, 而X的full conditional distribution，则是分布&lt;span class=&#34;math inline&#34;&gt;\(\pi\)&lt;/span&gt;, 但是局限在区域&lt;span class=&#34;math inline&#34;&gt;\(A_{u}=\left\{x: l_{i}(x)&amp;gt;u_{i}, i=1, \ldots, N\right\}\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;因为&lt;span class=&#34;math inline&#34;&gt;\(\pi\)&lt;/span&gt;是已知好抽的分布，&lt;span class=&#34;math inline&#34;&gt;\(l_i\)&lt;/span&gt;是可逆函数，所以就把问题变成求区域和从好抽的分布中抽的问题。&lt;/p&gt;
+&lt;p&gt;应用在如上例子中，就是 &lt;span class=&#34;math inline&#34;&gt;\(l(\eta_j)=\frac{1}{\eta_j+1}\)&lt;/span&gt; , &lt;span class=&#34;math inline&#34;&gt;\(\pi(\eta_j)=exp(-\frac{\mu_j^2}{2}\eta_j)\)&lt;/span&gt; 是指数分布。&lt;/p&gt;
+&lt;p&gt;那算法：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;从&lt;span class=&#34;math inline&#34;&gt;\((0,l(\eta_j))\)&lt;/span&gt;中抽&lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; .&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;求区域 &lt;span class=&#34;math inline&#34;&gt;\(A_u = \{\eta_j,l(\eta_j)&amp;gt;u\}\)&lt;/span&gt;, 也就是&lt;span class=&#34;math inline&#34;&gt;\((0,\frac{1}{u}-1)\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;在限制于&lt;span class=&#34;math inline&#34;&gt;\((0,\frac{1}{u}-1)\)&lt;/span&gt; 的exp分布上抽&lt;span class=&#34;math inline&#34;&gt;\(\eta_j\)&lt;/span&gt;。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这样就能得到&lt;span class=&#34;math inline&#34;&gt;\(\eta_j\)&lt;/span&gt;。然后再逆变化回&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt; 就能得到&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt; 的样本，又因为&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt;之间是独立的，所以这一步能向量化操作同时对所有的p个&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt;抽样。&lt;/p&gt;
+&lt;p&gt;其中第三步的算法实现是：&lt;/p&gt;
+&lt;p&gt;由于局限在了&lt;span class=&#34;math inline&#34;&gt;\((0,\frac{1}{u}-1)\)&lt;/span&gt; 上，而指数分布是单调的。就可以用一般的分布抽样的方法，从定义在&lt;span class=&#34;math inline&#34;&gt;\((0, F(\frac{1}{u}-1))\)&lt;/span&gt;的uniform抽，F是累积分布函数, 在这里就是 &lt;span class=&#34;math inline&#34;&gt;\(1-exp(-\mu_j\cdot (\frac{1}{u}-1))\)&lt;/span&gt;, 然后再逆回去，得到目标随机数。&lt;/p&gt;
+&lt;p&gt;算法：&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;从&lt;span class=&#34;math inline&#34;&gt;\((0,1-exp(-\mu_j\cdot (\frac{1}{u}-1)))\)&lt;/span&gt; 中抽 &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(\eta_j= -log(1-a)/\mu_j\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;对应代码：&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## update lambda_j&amp;#39;s in a block using slice sampling ##
+    eta = 1/(lambda^2)
+    upsi = stats::runif(p,0,1/(1+eta))
+    tempps = Beta^2/(2*sigma_sq*tau^2)
+    ub = (1-upsi)/upsi
+    # now sample eta from exp(tempv) truncated between 0 &amp;amp; upsi/(1-upsi)
+    Fub = 1 - exp(-tempps*ub) # exp cdf at ub
+    Fub[Fub &amp;lt; (1e-4)] = 1e-4;  # for numerical stability
+    up = stats::runif(p,0,Fub)
+    eta = -log(1-up)/tempps
+    lambda = 1/sqrt(eta);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;剩下的更新&lt;span class=&#34;math inline&#34;&gt;\(\tau\)&lt;/span&gt; 的部分类似。但是由于&lt;span class=&#34;math inline&#34;&gt;\(\tau\)&lt;/span&gt;是全局的参数，所以单个式子的形式就变成了叠乘的形式，所以就从exp分布变味了gamma分布。&lt;/p&gt;
+&lt;p&gt;The density of &lt;span class=&#34;math inline&#34;&gt;\(\tau\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Gamma distribution &lt;span class=&#34;math inline&#34;&gt;\(f(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)} x^{\alpha-1} e^{-\beta x}\)&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>果然还是想静静</title>
       <link>/post/2019-11-13-/</link>
       <pubDate>Wed, 13 Nov 2019 00:00:00 +0000</pubDate>
@@ -78,6 +227,7 @@
       
       <guid>/post/rcpp/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;首先是在devtools::load_all(“.”)的时候的一个坑，因为mac系统默认的clang不支持-fopenmp,
@@ -85,7 +235,7 @@
 &lt;pre&gt;&lt;code&gt;CC=/usr/local/opt/llvm/bin/clang
 CXX=/usr/local/opt/llvm/bin/clang++
 CXX11=/usr/local/opt/llvm/bin/clang++&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;来自&lt;a href=&#34;https://yufree.cn/cn/2019/02/14/compiler/&#34;&gt;于淼大人的博客&lt;/a&gt; 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用&lt;code&gt;devtools::load_all(&amp;quot;.&amp;quot;)&lt;/code&gt;就不会报错了。&lt;/p&gt;
+&lt;p&gt;来自&lt;a href=&#34;https://yufree.cn/cn/2019/02/14/compiler/&#34;&gt;于淼大人的博客&lt;/a&gt; 注意这是R的环境变量里面的Makevars，也就是.R/Makevars.大概意思是你的电脑的根目录的.R下面创建一个文件，名字是Makevars,然后再用&lt;code&gt;devtools::load_all(&#34;.&#34;)&lt;/code&gt;就不会报错了。&lt;/p&gt;
 &lt;p&gt;然后在写BayesJMCM的Rcpp版本的时候遇到的第二个坑是Rcpp::NumericVector和Rcpp::NumericMatrix到arma::vec和arma::mat之间的转换。按Dirk Eddelbuettel大人的写法是&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;Rcpp::NumericVector yr(ys);
 Rcpp::NumericMatrix Xr(XS);
@@ -340,16 +490,6 @@ where $C\left(u _ {i, 1, j _ {1}}, u _ {i, 2, j _ {2}}, u _ {i, 3, j _ {3}} | \a
 &lt;h2 id=&#34;tip-2&#34;&gt;Tip 2&lt;/h2&gt;
 
 &lt;p&gt;&amp;hellip;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Privacy Policy</title>
-      <link>/privacy/</link>
-      <pubDate>Thu, 28 Jun 2018 00:00:00 +0100</pubDate>
-      
-      <guid>/privacy/</guid>
-      <description>&lt;p&gt;&amp;hellip;&lt;/p&gt;
 </description>
     </item>
     
