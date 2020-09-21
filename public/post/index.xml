@@ -22,7 +22,7 @@ horseshoe prior属于multivariate scale mixtures of normals的分布族。所以
 在回归问题下的模型假设： \[ y=X\beta+\epsilon, \epsilon\sim N(0,\sigma^2)\\ \beta_j \sim N(0,\sigma^2 \lambda_j^2 \tau^2)\\ \lambda_j \sim Half-Cauchy(0,1) \] 可以额外加上以下超参数模型 \[ \tau \sim Half-Cauchy (0,1)\\ \sigma^2 \sim 1/\sigma^2 \]
 其中\(\lambda_j\) 叫做local shrinkage parameter，局部压缩参数，对于不同的\(\theta_j\)可以有不同的压缩系数，\(\tau\) 叫做global shrinkage parameter
 叫horseshoe，马蹄的原因大概是shrinkage weights的图像呈现马蹄形。
-@carlson 2010 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。
+Carvalho, Polson, and Scott (2010) 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。
 这篇文章给出了一个用于判断各种压缩先验性质的方法: \[ E\left(\theta_{i} \mid y\right)=\int_{0}^{1}\left(1-\kappa_{i}\right) y_{i} p\left(\kappa_{i} \mid y\right) \mathrm{d} \kappa_{i}=\left\{1-E\left(\kappa_{i} \mid y\right)\right\} y_{i} \] 在这种情况下, \(E(\kappa_i|y)\) 就是压缩率。</description>
     </item>
     

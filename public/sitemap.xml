@@ -51,6 +51,12 @@
   
     <url>
     
+      <loc>/privacy/</loc>
+      <lastmod>2018-06-28T00:00:00+01:00</lastmod>
+    </url>
+  
+    <url>
+    
       <loc>/project/external-project/</loc>
       <lastmod>2016-04-27T00:00:00+01:00</lastmod>
     </url>
@@ -180,14 +186,14 @@
   
     <url>
     
-      <loc>/tags/rcpp/</loc>
+      <loc>/categories/rcpp/</loc>
       <lastmod>2019-07-31T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
   
     <url>
     
-      <loc>/categories/rcpp/</loc>
+      <loc>/tags/rcpp/</loc>
       <lastmod>2019-07-31T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>

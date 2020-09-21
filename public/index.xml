@@ -62,7 +62,7 @@ y=X\beta+\epsilon, \epsilon\sim N(0,\sigma^2)\\
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;其中&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt; 叫做local shrinkage parameter，局部压缩参数，对于不同的&lt;span class=&#34;math inline&#34;&gt;\(\theta_j\)&lt;/span&gt;可以有不同的压缩系数，&lt;span class=&#34;math inline&#34;&gt;\(\tau\)&lt;/span&gt; 叫做global shrinkage parameter&lt;/p&gt;
 &lt;p&gt;叫horseshoe，马蹄的原因大概是shrinkage weights的图像呈现马蹄形。&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;citation&#34;&gt;@carlson&lt;/span&gt; 2010 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;citation&#34;&gt;Carvalho, Polson, and Scott (2010)&lt;/span&gt; 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。&lt;/p&gt;
 &lt;p&gt;这篇文章给出了一个用于判断各种压缩先验性质的方法:
 &lt;span class=&#34;math display&#34;&gt;\[
 E\left(\theta_{i} \mid y\right)=\int_{0}^{1}\left(1-\kappa_{i}\right) y_{i} p\left(\kappa_{i} \mid y\right) \mathrm{d} \kappa_{i}=\left\{1-E\left(\kappa_{i} \mid y\right)\right\} y_{i}
@@ -78,14 +78,14 @@ E\left(\theta_{i} \mid y\right)=\int_{0}^{1}\left(1-\kappa_{i}\right) y_{i} p\le
     algo=1
   else
     algo=2&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;在函数介绍中就有，当p&amp;gt;n时，使用的是Bhattacharya et.al. (2016)的算法，当n&amp;gt;p时，使用的是 Rue (2001)的算法对&lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; 的full conditional posterior distribution进行抽样。&lt;/p&gt;
+&lt;p&gt;在函数介绍中就有，当p&amp;gt;n时，使用的是 &lt;span class=&#34;citation&#34;&gt;Bhattacharya, Chakraborty, and Mallick (2016)&lt;/span&gt; 的算法，当n&amp;gt;p时，使用的是 Rue (2001)的算法对&lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; 的full conditional posterior distribution进行抽样。&lt;/p&gt;
 &lt;p&gt;因为是Normal-Normal case，conditional on &lt;span class=&#34;math inline&#34;&gt;\(\sigma,\tau,\lambda\)&lt;/span&gt; ,&lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; 是Normal prior加Normal likelihood，所以对于Bayes回归问题，beta的全条件后验分布基本上可以写成:
 &lt;span class=&#34;math display&#34;&gt;\[
 \beta \mid y, \lambda, \tau, \sigma \sim N\left(A^{-1} X^{\mathrm{T}} y, \sigma^{2} A^{-1}\right), \quad A=\left(X^{\mathrm{T}} X+\Lambda_{*}^{-1}\right), \quad \Lambda_{*}=\tau^{2} \operatorname{diag}\left(\lambda_{1}^{2}, \ldots, \lambda_{p}^{2}\right)
 \]&lt;/span&gt;
 这种形式，所以就是用Gibbs算法对&lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; 抽样。&lt;/p&gt;
 &lt;p&gt;现在介绍在p&amp;gt;n情况下的算法。&lt;/p&gt;
-&lt;p&gt;来源于Bhattacharya. et.al. (2016)，&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;mailto:来源于@Bhattacharya2016&#34; class=&#34;email&#34;&gt;来源于@Bhattacharya2016&lt;/a&gt; ，&lt;/p&gt;
 &lt;p&gt;假设我们要从&lt;span class=&#34;math inline&#34;&gt;\(N(\mu,\Sigma)\)&lt;/span&gt;中抽样，有
 &lt;span class=&#34;math display&#34;&gt;\[
 \Sigma=\left(\Phi^{\mathrm{T}} \Phi+D^{-1}\right)^{-1}, \quad \mu=\Sigma \Phi^{\mathrm{T}} \alpha
@@ -129,7 +129,7 @@ E\left(\theta_{i} \mid y\right)=\int_{0}^{1}\left(1-\kappa_{i}\right) y_{i} p\le
       v_star=solve((X%*%U+I_n),((y/sqrt(sigma_sq))-v))
       Beta=sqrt(sigma_sq)*(u+U%*%v_star)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;当p&amp;lt;n,也就是algo==2时则是用经典的Cholesky分解进行抽样，故不再赘述。&lt;/p&gt;
-&lt;p&gt;下一块则是抽取&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt; 的过程，这块算法使用了 Polson. et. al. (2014)的supplement material中，使用Damien et.al. (1999)算法构造的Slice sampler。&lt;/p&gt;
+&lt;p&gt;下一块则是抽取&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt; 的过程，这块算法使用了 &lt;span class=&#34;citation&#34;&gt;Polson, Scott, and Windle (2014)&lt;/span&gt; 的supplement material中，使用 &lt;span class=&#34;citation&#34;&gt;Damien, Wakefield, and Walker (1999)&lt;/span&gt; 算法构造的Slice sampler。&lt;/p&gt;
 &lt;p&gt;首先，我们可以写出&lt;span class=&#34;math inline&#34;&gt;\(\lambda_j\)&lt;/span&gt; 的后验分布：
 &lt;span class=&#34;math display&#34;&gt;\[
 p(\lambda_j|y,\tau,\sigma)\propto \frac{2}{\pi(1+\lambda_j^2)}\cdot \frac{1}{\lambda_j}\cdot exp(-\frac{1}{\lambda_j^2}\frac{\beta_j^2}{2\tau^2\sigma^2} )
@@ -180,6 +180,20 @@ f\left(x, u_{1}, \ldots, u_{N}\right) \propto \pi(x) \prod_{i=1}^{N} I\left\{u_{
 &lt;p&gt;剩下的更新&lt;span class=&#34;math inline&#34;&gt;\(\tau\)&lt;/span&gt; 的部分类似。但是由于&lt;span class=&#34;math inline&#34;&gt;\(\tau\)&lt;/span&gt;是全局的参数，所以单个式子的形式就变成了叠乘的形式，所以就从exp分布变味了gamma分布。&lt;/p&gt;
 &lt;p&gt;The density of &lt;span class=&#34;math inline&#34;&gt;\(\tau\)&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;Gamma distribution &lt;span class=&#34;math inline&#34;&gt;\(f(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)} x^{\alpha-1} e^{-\beta x}\)&lt;/span&gt;&lt;/p&gt;
+&lt;div id=&#34;refs&#34; class=&#34;references hanging-indent&#34;&gt;
+&lt;div id=&#34;ref-Bhattacharya2016&#34;&gt;
+&lt;p&gt;Bhattacharya, Anirban, Antik Chakraborty, and Bani K. Mallick. 2016. “Miscellanea fast sampling with Gaussian scale mixture priors in high-dimensional regression.” &lt;em&gt;Biometrika&lt;/em&gt; 103 (4): 985–91. &lt;a href=&#34;https://doi.org/10.1093/biomet/asw042&#34;&gt;https://doi.org/10.1093/biomet/asw042&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-Carvalho2010&#34;&gt;
+&lt;p&gt;Carvalho, Carlos M, Nicholas G Polson, and James G Scott. 2010. “The horseshoe estimator for sparse signals.” &lt;em&gt;Biometrika&lt;/em&gt; 97 (2): 465–80. &lt;a href=&#34;https://doi.org/10.1093/biomet/asq017&#34;&gt;https://doi.org/10.1093/biomet/asq017&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-Damien1999&#34;&gt;
+&lt;p&gt;Damien, Paul, Jon Wakefield, and Stephen Walker. 1999. “Gibbs sampling for Bayesian non-conjugate and hierarchical models by using auxiliary variables.” &lt;em&gt;Journal of the Royal Statistical Society. Series B: Statistical Methodology&lt;/em&gt; 61 (2): 331–44. &lt;a href=&#34;https://doi.org/10.1111/1467-9868.00179&#34;&gt;https://doi.org/10.1111/1467-9868.00179&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-Polson2014&#34;&gt;
+&lt;p&gt;Polson, Nicholas G., James G. Scott, and Jesse Windle. 2014. “The Bayesian bridge.” &lt;em&gt;Journal of the Royal Statistical Society. Series B: Statistical Methodology&lt;/em&gt; 76 (4): 713–33. &lt;a href=&#34;https://doi.org/10.1111/rssb.12042&#34;&gt;https://doi.org/10.1111/rssb.12042&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -490,6 +504,16 @@ where $C\left(u _ {i, 1, j _ {1}}, u _ {i, 2, j _ {2}}, u _ {i, 3, j _ {3}} | \a
 &lt;h2 id=&#34;tip-2&#34;&gt;Tip 2&lt;/h2&gt;
 
 &lt;p&gt;&amp;hellip;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Privacy Policy</title>
+      <link>/privacy/</link>
+      <pubDate>Thu, 28 Jun 2018 00:00:00 +0100</pubDate>
+      
+      <guid>/privacy/</guid>
+      <description>&lt;p&gt;&amp;hellip;&lt;/p&gt;
 </description>
     </item>
     

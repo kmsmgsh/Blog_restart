@@ -8,6 +8,8 @@ tags: []
 image:
   caption: ''
   focal_point: ''
+bibliography: papers.bib
+math: true
 ---
 
 
@@ -36,7 +38,7 @@ $$
 
 
 
-@carlson 2010 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。
+@Carvalho2010 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。
 
 这篇文章给出了一个用于判断各种压缩先验性质的方法:
 $$
@@ -65,7 +67,7 @@ if(p>n)
     algo=2
 ```
 
-在函数介绍中就有，当p>n时，使用的是Bhattacharya et.al. (2016)的算法，当n>p时，使用的是 Rue (2001)的算法对$\beta$ 的full conditional posterior distribution进行抽样。
+在函数介绍中就有，当p>n时，使用的是 @Bhattacharya2016 的算法，当n>p时，使用的是 Rue (2001)的算法对$\beta$ 的full conditional posterior distribution进行抽样。
 
 因为是Normal-Normal case，conditional on $\sigma,\tau,\lambda$ ,$\beta$ 是Normal prior加Normal likelihood，所以对于Bayes回归问题，beta的全条件后验分布基本上可以写成:
 $$
@@ -75,7 +77,7 @@ $$
 
 现在介绍在p>n情况下的算法。
 
-来源于Bhattacharya. et.al. (2016)，
+来源于@Bhattacharya2016 ，
 
 假设我们要从$N(\mu,\Sigma)$中抽样，有
 $$
@@ -131,9 +133,9 @@ $$
 
 
 
-下一块则是抽取$\lambda_j$ 的过程，这块算法使用了 Polson. et. al. (2014)的supplement material中，使用Damien et.al. (1999)算法构造的Slice sampler。
+下一块则是抽取$\lambda_j$ 的过程，这块算法使用了 @Polson2014 的supplement material中，使用 @Damien1999 算法构造的Slice sampler。
 
-首先，我们可以写出$\lambda_j$ 的后验分布：
+首先，我们可以写出$\lambda_j$ 的后验分布： 
 $$
 p(\lambda_j|y,\tau,\sigma)\propto \frac{2}{\pi(1+\lambda_j^2)}\cdot \frac{1}{\lambda_j}\cdot exp(-\frac{1}{\lambda_j^2}\frac{\beta_j^2}{2\tau^2\sigma^2} )
 $$

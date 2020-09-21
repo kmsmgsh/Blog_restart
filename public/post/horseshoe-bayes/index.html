@@ -33,7 +33,7 @@ horseshoe prior属于multivariate scale mixtures of normals的分布族。所以
 在回归问题下的模型假设： \[ y=X\beta&#43;\epsilon, \epsilon\sim N(0,\sigma^2)\\ \beta_j \sim N(0,\sigma^2 \lambda_j^2 \tau^2)\\ \lambda_j \sim Half-Cauchy(0,1) \] 可以额外加上以下超参数模型 \[ \tau \sim Half-Cauchy (0,1)\\ \sigma^2 \sim 1/\sigma^2 \]
 其中\(\lambda_j\) 叫做local shrinkage parameter，局部压缩参数，对于不同的\(\theta_j\)可以有不同的压缩系数，\(\tau\) 叫做global shrinkage parameter
 叫horseshoe，马蹄的原因大概是shrinkage weights的图像呈现马蹄形。
-@carlson 2010 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。
+Carvalho, Polson, and Scott (2010) 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。
 这篇文章给出了一个用于判断各种压缩先验性质的方法: \[ E\left(\theta_{i} \mid y\right)=\int_{0}^{1}\left(1-\kappa_{i}\right) y_{i} p\left(\kappa_{i} \mid y\right) \mathrm{d} \kappa_{i}=\left\{1-E\left(\kappa_{i} \mid y\right)\right\} y_{i} \] 在这种情况下, \(E(\kappa_i|y)\) 就是压缩率。">
 
   
@@ -131,7 +131,7 @@ horseshoe prior属于multivariate scale mixtures of normals的分布族。所以
 在回归问题下的模型假设： \[ y=X\beta&#43;\epsilon, \epsilon\sim N(0,\sigma^2)\\ \beta_j \sim N(0,\sigma^2 \lambda_j^2 \tau^2)\\ \lambda_j \sim Half-Cauchy(0,1) \] 可以额外加上以下超参数模型 \[ \tau \sim Half-Cauchy (0,1)\\ \sigma^2 \sim 1/\sigma^2 \]
 其中\(\lambda_j\) 叫做local shrinkage parameter，局部压缩参数，对于不同的\(\theta_j\)可以有不同的压缩系数，\(\tau\) 叫做global shrinkage parameter
 叫horseshoe，马蹄的原因大概是shrinkage weights的图像呈现马蹄形。
-@carlson 2010 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。
+Carvalho, Polson, and Scott (2010) 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。
 这篇文章给出了一个用于判断各种压缩先验性质的方法: \[ E\left(\theta_{i} \mid y\right)=\int_{0}^{1}\left(1-\kappa_{i}\right) y_{i} p\left(\kappa_{i} \mid y\right) \mathrm{d} \kappa_{i}=\left\{1-E\left(\kappa_{i} \mid y\right)\right\} y_{i} \] 在这种情况下, \(E(\kappa_i|y)\) 就是压缩率。"><meta property="og:image" content="/img/icon-192.png">
   <meta property="og:locale" content="en-us">
   
@@ -479,7 +479,7 @@ y=X\beta+\epsilon, \epsilon\sim N(0,\sigma^2)\\
 \]</span></p>
 <p>其中<span class="math inline">\(\lambda_j\)</span> 叫做local shrinkage parameter，局部压缩参数，对于不同的<span class="math inline">\(\theta_j\)</span>可以有不同的压缩系数，<span class="math inline">\(\tau\)</span> 叫做global shrinkage parameter</p>
 <p>叫horseshoe，马蹄的原因大概是shrinkage weights的图像呈现马蹄形。</p>
-<p><span class="citation">@carlson</span> 2010 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。</p>
+<p><span class="citation">Carvalho, Polson, and Scott (2010)</span> 给出了几个horseshoe estimator的相关性质以及和传统其他压缩先验方法的比较。</p>
 <p>这篇文章给出了一个用于判断各种压缩先验性质的方法:
 <span class="math display">\[
 E\left(\theta_{i} \mid y\right)=\int_{0}^{1}\left(1-\kappa_{i}\right) y_{i} p\left(\kappa_{i} \mid y\right) \mathrm{d} \kappa_{i}=\left\{1-E\left(\kappa_{i} \mid y\right)\right\} y_{i}
@@ -495,14 +495,14 @@ E\left(\theta_{i} \mid y\right)=\int_{0}^{1}\left(1-\kappa_{i}\right) y_{i} p\le
     algo=1
   else
     algo=2</code></pre>
-<p>在函数介绍中就有，当p&gt;n时，使用的是Bhattacharya et.al. (2016)的算法，当n&gt;p时，使用的是 Rue (2001)的算法对<span class="math inline">\(\beta\)</span> 的full conditional posterior distribution进行抽样。</p>
+<p>在函数介绍中就有，当p&gt;n时，使用的是 <span class="citation">Bhattacharya, Chakraborty, and Mallick (2016)</span> 的算法，当n&gt;p时，使用的是 Rue (2001)的算法对<span class="math inline">\(\beta\)</span> 的full conditional posterior distribution进行抽样。</p>
 <p>因为是Normal-Normal case，conditional on <span class="math inline">\(\sigma,\tau,\lambda\)</span> ,<span class="math inline">\(\beta\)</span> 是Normal prior加Normal likelihood，所以对于Bayes回归问题，beta的全条件后验分布基本上可以写成:
 <span class="math display">\[
 \beta \mid y, \lambda, \tau, \sigma \sim N\left(A^{-1} X^{\mathrm{T}} y, \sigma^{2} A^{-1}\right), \quad A=\left(X^{\mathrm{T}} X+\Lambda_{*}^{-1}\right), \quad \Lambda_{*}=\tau^{2} \operatorname{diag}\left(\lambda_{1}^{2}, \ldots, \lambda_{p}^{2}\right)
 \]</span>
 这种形式，所以就是用Gibbs算法对<span class="math inline">\(\beta\)</span> 抽样。</p>
 <p>现在介绍在p&gt;n情况下的算法。</p>
-<p>来源于Bhattacharya. et.al. (2016)，</p>
+<p><a href="mailto:来源于@Bhattacharya2016" class="email">来源于@Bhattacharya2016</a> ，</p>
 <p>假设我们要从<span class="math inline">\(N(\mu,\Sigma)\)</span>中抽样，有
 <span class="math display">\[
 \Sigma=\left(\Phi^{\mathrm{T}} \Phi+D^{-1}\right)^{-1}, \quad \mu=\Sigma \Phi^{\mathrm{T}} \alpha
@@ -546,7 +546,7 @@ E\left(\theta_{i} \mid y\right)=\int_{0}^{1}\left(1-\kappa_{i}\right) y_{i} p\le
       v_star=solve((X%*%U+I_n),((y/sqrt(sigma_sq))-v))
       Beta=sqrt(sigma_sq)*(u+U%*%v_star)</code></pre>
 <p>当p&lt;n,也就是algo==2时则是用经典的Cholesky分解进行抽样，故不再赘述。</p>
-<p>下一块则是抽取<span class="math inline">\(\lambda_j\)</span> 的过程，这块算法使用了 Polson. et. al. (2014)的supplement material中，使用Damien et.al. (1999)算法构造的Slice sampler。</p>
+<p>下一块则是抽取<span class="math inline">\(\lambda_j\)</span> 的过程，这块算法使用了 <span class="citation">Polson, Scott, and Windle (2014)</span> 的supplement material中，使用 <span class="citation">Damien, Wakefield, and Walker (1999)</span> 算法构造的Slice sampler。</p>
 <p>首先，我们可以写出<span class="math inline">\(\lambda_j\)</span> 的后验分布：
 <span class="math display">\[
 p(\lambda_j|y,\tau,\sigma)\propto \frac{2}{\pi(1+\lambda_j^2)}\cdot \frac{1}{\lambda_j}\cdot exp(-\frac{1}{\lambda_j^2}\frac{\beta_j^2}{2\tau^2\sigma^2} )
@@ -597,6 +597,20 @@ f\left(x, u_{1}, \ldots, u_{N}\right) \propto \pi(x) \prod_{i=1}^{N} I\left\{u_{
 <p>剩下的更新<span class="math inline">\(\tau\)</span> 的部分类似。但是由于<span class="math inline">\(\tau\)</span>是全局的参数，所以单个式子的形式就变成了叠乘的形式，所以就从exp分布变味了gamma分布。</p>
 <p>The density of <span class="math inline">\(\tau\)</span></p>
 <p>Gamma distribution <span class="math inline">\(f(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)} x^{\alpha-1} e^{-\beta x}\)</span></p>
+<div id="refs" class="references hanging-indent">
+<div id="ref-Bhattacharya2016">
+<p>Bhattacharya, Anirban, Antik Chakraborty, and Bani K. Mallick. 2016. “Miscellanea fast sampling with Gaussian scale mixture priors in high-dimensional regression.” <em>Biometrika</em> 103 (4): 985–91. <a href="https://doi.org/10.1093/biomet/asw042">https://doi.org/10.1093/biomet/asw042</a>.</p>
+</div>
+<div id="ref-Carvalho2010">
+<p>Carvalho, Carlos M, Nicholas G Polson, and James G Scott. 2010. “The horseshoe estimator for sparse signals.” <em>Biometrika</em> 97 (2): 465–80. <a href="https://doi.org/10.1093/biomet/asq017">https://doi.org/10.1093/biomet/asq017</a>.</p>
+</div>
+<div id="ref-Damien1999">
+<p>Damien, Paul, Jon Wakefield, and Stephen Walker. 1999. “Gibbs sampling for Bayesian non-conjugate and hierarchical models by using auxiliary variables.” <em>Journal of the Royal Statistical Society. Series B: Statistical Methodology</em> 61 (2): 331–44. <a href="https://doi.org/10.1111/1467-9868.00179">https://doi.org/10.1111/1467-9868.00179</a>.</p>
+</div>
+<div id="ref-Polson2014">
+<p>Polson, Nicholas G., James G. Scott, and Jesse Windle. 2014. “The Bayesian bridge.” <em>Journal of the Royal Statistical Society. Series B: Statistical Methodology</em> 76 (4): 713–33. <a href="https://doi.org/10.1111/rssb.12042">https://doi.org/10.1111/rssb.12042</a>.</p>
+</div>
+</div>
 </div>
 
     </div>
@@ -745,6 +759,10 @@ f\left(x, u_{1}, \ldots, u_{N}\right) \propto \pi(x) \prod_{i=1}^{N} I\left\{u_{
 <div class="container">
   <footer class="site-footer">
   
+  <p class="powered-by">
+    <a href="/privacy/">Privacy Policy</a>
+  </p>
+  
 
   <p class="powered-by">
     
@@ -797,6 +815,9 @@ f\left(x, u_{1}, \ldots, u_{N}\right) \propto \pi(x) \prod_{i=1}^{N} I\left\{u_{
 
     
     
+    
+    <script src="/js/mathjax-config.js"></script>
+    
 
     
     
@@ -814,6 +835,8 @@ f\left(x, u_{1}, \ldots, u_{N}\right) \propto \pi(x) \prod_{i=1}^{N} I\left\{u_{
       
 
       
+      
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_CHTML-full" integrity="sha256-GhM+5JHb6QUzOQPXSJLEWP7R73CbkisjzK5Eyij4U9w=" crossorigin="anonymous" async></script>
       
     
 
